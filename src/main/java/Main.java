@@ -36,6 +36,7 @@ public class Main {
           String[] requestArray = request.split("\r\n");
           System.out.println(Arrays.toString(requestArray));
           if (!requestArray[0].split("\\s+")[1].equals("/")) {
+              System.out.println(requestArray[0].split("\\s+")[1]);
               socket.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
           } else {
               socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
