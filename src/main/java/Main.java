@@ -3,32 +3,29 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class Main {
-  public static void main(String[] args) {
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
-    System.out.println("Logs from your program will appear here!");
 
-    // TODO: Uncomment the code below to pass the first stage
-    //
+  public static void main(String[] args) {
      try {
        ServerSocket serverSocket = new ServerSocket(4221);
 
        // Since the tester restarts your program quite often, setting SO_REUSEADDR
        // ensures that we don't run into 'Address already in use' errors
        serverSocket.setReuseAddress(true);
-//       ExecutorService service = Executors.newFixedThreadPool(10);
-         ExecutorService service = Executors.newCachedThreadPool();
+       ExecutorService service = Executors.newFixedThreadPool(10);
          while(true) {
            Socket socket = serverSocket.accept(); // Wait for connection from client
            service.execute(() -> {
                try {
-                   handleRequest(socket);
+                   handleRequest(socket, args);
                } catch (IOException e) {
                    throw new RuntimeException(e);
                }
@@ -41,15 +38,22 @@ public class Main {
      }
   }
 
-  private static void handleRequest(Socket socket) throws IOException{
+  private static void handleRequest(Socket socket, String[] argumentsPassed) throws IOException{
       InputStream inputStream = socket.getInputStream();
       byte[] buffer = new byte[1024];
       int readByteCount = inputStream.read(buffer);
+
+      if(argumentsPassed.length > 0) {
+          Map<String, String> commandLineArgs = Arrays.stream(argumentsPassed)
+                  .collect(Collectors.toMap(flag -> flag, flagValue -> flagValue));
+          System.out.println(commandLineArgs);
+      }
+
       if(readByteCount != -1) {
-          
           String request = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
           CustomHttpRequest customHttpRequest = getHttpRequest(request);
           String output = "";
+
           if(customHttpRequest.path().equals("/")){
               output = "HTTP/1.1 200 OK\r\n\r\n";
           }else if(customHttpRequest.path().startsWith("/echo/") && !customHttpRequest.path().substring(6).isEmpty()) {
@@ -85,6 +89,11 @@ public class Main {
   private static String getHeader(Map<String, String> headers, String headerName){
       return headers.getOrDefault(headerName, "");
   }
+
+  private static boolean doesFileExist(String file){
+      return false;
+  }
+
 }
 
 
