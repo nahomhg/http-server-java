@@ -22,24 +22,25 @@ public class Main {
        // Since the tester restarts your program quite often, setting SO_REUSEADDR
        // ensures that we don't run into 'Address already in use' errors
        serverSocket.setReuseAddress(true);
-
-       Socket socket = serverSocket.accept(); // Wait for connection from client
        ExecutorService service = Executors.newFixedThreadPool(10);
-       service.execute(() -> {
-           try {
-               handleRequest(socket);
-           } catch (IOException e) {
-               throw new RuntimeException(e);
-           }
-       });
-       service.shutdown();
-       System.out.println("accepted new connection");
+       while(true) {
+           Socket socket = serverSocket.accept(); // Wait for connection from client
+           service.execute(() -> {
+               try {
+                   handleRequest(socket);
+               } catch (IOException e) {
+                   throw new RuntimeException(e);
+               }
+           });
+
+           System.out.println("accepted new connection");
+       }
      } catch (IOException e) {
        System.out.println("IOException: " + e.getMessage());
      }
   }
 
-  public static void handleRequest(Socket socket) throws IOException{
+  private static void handleRequest(Socket socket) throws IOException{
       InputStream inputStream = socket.getInputStream();
       byte[] buffer = new byte[1024];
       int readByteCount = inputStream.read(buffer);
