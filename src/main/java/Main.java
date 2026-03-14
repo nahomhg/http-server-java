@@ -29,13 +29,13 @@ public class Main {
 
   private static void handleRequest(Socket socket) throws IOException{
       InputStream inputStream = socket.getInputStream();
-      byte[] buffer = new byte[1204];
+      byte[] buffer = new byte[1024];
       int readByteCount = inputStream.read(buffer);
       if(readByteCount != -1) {
           String request = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
           String[] requestArray = request.split("\r\n");
           System.out.println(Arrays.toString(requestArray));
-          if (!requestArray[0].split(" ")[1].equals("/")) {
+          if (!requestArray[0].split("\\s+")[1].equals("/")) {
               socket.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
           } else {
               socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
