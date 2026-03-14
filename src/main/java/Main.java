@@ -24,7 +24,7 @@ public class Main {
        serverSocket.setReuseAddress(true);
 
        Socket socket = serverSocket.accept(); // Wait for connection from client
-       ExecutorService service = Executors.newCachedThreadPool();
+       ExecutorService service = Executors.newFixedThreadPool(10);
        service.execute(() -> {
            try {
                handleRequest(socket);
