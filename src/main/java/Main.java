@@ -4,6 +4,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
   public static void main(String[] args) {
@@ -33,13 +35,30 @@ public class Main {
       int readByteCount = inputStream.read(buffer);
       if(readByteCount != -1) {
           String request = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
-          String[] requestArray = request.split("\r\n");
-          System.out.println(Arrays.toString(requestArray));
-          if (!requestArray[0].split("\\s+")[1].equals("/")) {
+          HttpRequest httpRequest = getHttpRequest(request);
+          System.out.println(httpRequest.toString());
+          if (!httpRequest.path().equals("/")) {
               socket.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
           } else {
               socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
           }
       }
   }
+  private static HttpRequest getHttpRequest(String request){
+      String[] requestArray = request.split("\r\n");
+      String requestMethod = requestArray[0].split("\\s+")[0];
+      String requestPath = requestArray[0].split("\\s+")[1];
+      HashMap<String, String> headers = new HashMap<>();
+      int i = 1;
+      while(i <requestArray.length && !requestArray[i].equals("")){
+          headers.put(requestArray[i].split(": ")[0],requestArray[i].split(": ")[1]);
+          i++;
+      }
+      String body = (i + 1 < requestArray.length) ? requestArray[i+1] : "";
+      return new HttpRequest(requestMethod, requestPath, headers, body);
+  }
 }
+
+
+
+record HttpRequest(String method, String path, Map<String, String> headers, String body){};
