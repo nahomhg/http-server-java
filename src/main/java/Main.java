@@ -36,12 +36,19 @@ public class Main {
       if(readByteCount != -1) {
           String request = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
           HttpRequest httpRequest = getHttpRequest(request);
-          System.out.println(httpRequest.toString());
-          if (!httpRequest.path().equals("/")) {
-              socket.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
-          } else {
-              socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+          String output = "";
+          if(httpRequest.path().equals("/")){
+              output = "HTTP/1.1 200 OK\r\n\r\n";
+          }else if(httpRequest.path().startsWith("/echo/") && !httpRequest.path().substring(6).isEmpty()) {
+              String pathStr = httpRequest.path().substring(6);
+              output = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: "+pathStr.length()+"\r\n\r\n"+pathStr+"\n";
           }
+          else {
+              output = "HTTP/1.1 404 Not Found\r\n\r\n";
+          }
+
+          socket.getOutputStream().write(output.getBytes());
+
       }
   }
   private static HttpRequest getHttpRequest(String request){
