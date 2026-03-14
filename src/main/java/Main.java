@@ -39,7 +39,7 @@ public class Main {
      }
   }
 
-  private static void handleRequest(Socket socket) throws IOException{
+  public static void handleRequest(Socket socket) throws IOException{
       InputStream inputStream = socket.getInputStream();
       byte[] buffer = new byte[1024];
       int readByteCount = inputStream.read(buffer);
