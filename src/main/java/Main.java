@@ -27,13 +27,17 @@ public class Main {
            String request = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
            String[] requestArray = request.split("\r\n");
            System.out.println(Arrays.toString(requestArray));
+           if(!requestArray[0].split(" ")[1].equals("/")){
+               socket.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
+           }else
+               socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
        }
        System.out.println("accepted new connection");
      } catch (IOException e) {
        System.out.println("IOException: " + e.getMessage());
      }
   }
-//  private void handleRequest(Socket socket){
-//
-//  }
+  private void handleRequest(Socket socket){
+
+  }
 }
