@@ -16,7 +16,8 @@ public class Main {
        // ensures that we don't run into 'Address already in use' errors
        serverSocket.setReuseAddress(true);
 
-       serverSocket.accept(); // Wait for connection from client.
+       Socket socket = serverSocket.accept(); // Wait for connection from client.
+         socket.getOutputStream().write("HTTP/1.1 200\r\n\r\n".getBytes());
        System.out.println("accepted new connection");
      } catch (IOException e) {
        System.out.println("IOException: " + e.getMessage());
