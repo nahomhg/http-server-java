@@ -5,6 +5,9 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main {
   public static void main(String[] args) {
@@ -21,7 +24,15 @@ public class Main {
        serverSocket.setReuseAddress(true);
 
        Socket socket = serverSocket.accept(); // Wait for connection from client
-       handleRequest(socket);
+       ExecutorService service = Executors.newCachedThreadPool();
+       service.execute(() -> {
+           try {
+               handleRequest(socket);
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       });
+
        System.out.println("accepted new connection");
      } catch (IOException e) {
        System.out.println("IOException: " + e.getMessage());
