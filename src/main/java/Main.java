@@ -3,7 +3,6 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,14 +33,20 @@ public class Main {
       byte[] buffer = new byte[1024];
       int readByteCount = inputStream.read(buffer);
       if(readByteCount != -1) {
+          
           String request = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
-          HttpRequest httpRequest = getHttpRequest(request);
+          CustomHttpRequest customHttpRequest = getHttpRequest(request);
           String output = "";
-          if(httpRequest.path().equals("/")){
+
+          if(customHttpRequest.path().equals("/")){
               output = "HTTP/1.1 200 OK\r\n\r\n";
-          }else if(httpRequest.path().startsWith("/echo/") && !httpRequest.path().substring(6).isEmpty()) {
-              String pathStr = httpRequest.path().substring(6);
+          }else if(customHttpRequest.path().startsWith("/echo/") && !customHttpRequest.path().substring(6).isEmpty()) {
+              String pathStr = customHttpRequest.path().substring(6);
               output = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: "+pathStr.length()+"\r\n\r\n"+pathStr+"\n";
+          }
+          else if(customHttpRequest.path().equals("/user-agent")){
+              String userAgentContent = getHeader(customHttpRequest.headers(),"User-Agent");
+              output = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: "+userAgentContent.length()+"\r\n\r\n"+userAgentContent+"\n";
           }
           else {
               output = "HTTP/1.1 404 Not Found\r\n\r\n";
@@ -51,7 +56,7 @@ public class Main {
 
       }
   }
-  private static HttpRequest getHttpRequest(String request){
+  private static CustomHttpRequest getHttpRequest(String request){
       String[] requestArray = request.split("\r\n");
       String requestMethod = requestArray[0].split("\\s+")[0];
       String requestPath = requestArray[0].split("\\s+")[1];
@@ -62,10 +67,13 @@ public class Main {
           i++;
       }
       String body = (i + 1 < requestArray.length) ? requestArray[i+1] : "";
-      return new HttpRequest(requestMethod, requestPath, headers, body);
+      return new CustomHttpRequest(requestMethod, requestPath, headers, body);
+  }
+
+  private static String getHeader(Map<String, String> headers, String headerName){
+      return headers.getOrDefault(headerName, "");
   }
 }
 
 
-
-record HttpRequest(String method, String path, Map<String, String> headers, String body){};
+record CustomHttpRequest(String method, String path, Map<String, String> headers, String body){};
