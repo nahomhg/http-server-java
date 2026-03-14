@@ -48,7 +48,7 @@ public class Main {
           String request = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
           CustomHttpRequest customHttpRequest = getHttpRequest(request);
           String output = "";
-
+          System.out.println(customHttpRequest);
           if(customHttpRequest.path().equals("/")){
               output = "HTTP/1.1 200 OK\r\n\r\n";
           }else if(customHttpRequest.path().startsWith("/echo/") && !customHttpRequest.path().substring(6).isEmpty()) {
