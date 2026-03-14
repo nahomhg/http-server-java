@@ -1,8 +1,9 @@
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,20 +43,30 @@ public class Main {
       InputStream inputStream = socket.getInputStream();
       byte[] buffer = new byte[1024];
       int readByteCount = inputStream.read(buffer);
+      String response_200 = "HTTP/1.1 200 OK\r\n\r\n";
+      String response_404 = "HTTP/1.1 404 Not Found\r\n\r\n";
 
-      if(argumentsPassed.length > 0) {
-          Map<String, String> commandLineArgs = Arrays.stream(argumentsPassed)
-                  .collect(Collectors.toMap(flag -> flag, flagValue -> flagValue));
-          System.out.println(commandLineArgs);
-      }
 
       if(readByteCount != -1) {
           String request = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
           CustomHttpRequest customHttpRequest = getHttpRequest(request);
           String output = "";
+          String fileContent = "";
+
+          int indexOfDirectory = 0;
+          if(argumentsPassed.length > 0) {
+              indexOfDirectory = Arrays.asList(argumentsPassed).indexOf("--directory");
+              String fileName = customHttpRequest.path().split("\n")[1];
+              if(indexOfDirectory != -1 && !doesFileExist(argumentsPassed[indexOfDirectory+1],fileName)){
+                  output = response_404;
+              }else{
+                  fileContent = getFileContent(argumentsPassed[indexOfDirectory+1]+fileName);
+                  output = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\\nContent-Length: "+fileContent.length()+"\r\n\r\n"+fileContent+"!\n";
+              }
+          }
 
           if(customHttpRequest.path().equals("/")){
-              output = "HTTP/1.1 200 OK\r\n\r\n";
+              output = response_200;
           }else if(customHttpRequest.path().startsWith("/echo/") && !customHttpRequest.path().substring(6).isEmpty()) {
               String pathStr = customHttpRequest.path().substring(6);
               output = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: "+pathStr.length()+"\r\n\r\n"+pathStr+"\n";
@@ -65,7 +76,7 @@ public class Main {
               output = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: "+userAgentContent.length()+"\r\n\r\n"+userAgentContent+"\n";
           }
           else {
-              output = "HTTP/1.1 404 Not Found\r\n\r\n";
+              output = response_404;
           }
 
           socket.getOutputStream().write(output.getBytes());
@@ -90,10 +101,31 @@ public class Main {
       return headers.getOrDefault(headerName, "");
   }
 
-  private static boolean doesFileExist(String file){
-      return false;
+  private static boolean doesFileExist(String directory, String fileName){
+      File file = new File(directory+fileName);
+      return file.exists();
   }
 
+  private static String getFileContent(String filePath) {
+      StringBuilder fileContent = new StringBuilder();
+      Path path = new File(filePath).toPath();
+
+      try(BufferedReader br = new
+              BufferedReader(
+                      new InputStreamReader(Files.newInputStream(path),StandardCharsets.UTF_8)
+                      )){
+        String line;
+        while((line = br.readLine()) != null){
+            fileContent.append(line);
+            fileContent.append("\n");
+        }
+        return fileContent.toString();
+
+      }catch(IOException exception){
+        exception.getMessage();
+      }
+      return "";
+  }
 }
 
 
