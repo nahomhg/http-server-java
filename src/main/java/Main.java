@@ -104,7 +104,7 @@ public class Main {
 
   private static boolean doesFileExist(String directory, String fileName){
       File file = new File(directory+fileName);
-      System.out.println("file: "+file.getPath());
+      System.out.println("file info: "+file.getPath());
       return file.exists();
   }
 
