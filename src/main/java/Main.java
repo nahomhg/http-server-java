@@ -56,8 +56,7 @@ public class Main {
           int indexOfDirectory = 0;
           if(argumentsPassed.length > 0) {
               indexOfDirectory = Arrays.asList(argumentsPassed).indexOf("--directory");
-              String fileName = customHttpRequest.path().split("/")[1];
-              System.out.println(fileName);
+              String fileName = customHttpRequest.path().split("/")[2];
               if(indexOfDirectory != -1 && !doesFileExist(argumentsPassed[indexOfDirectory+1],fileName)){
                   System.out.println("got here:\n"+indexOfDirectory+"\t"+doesFileExist(argumentsPassed[indexOfDirectory+1],fileName));
                   output = response_404;
