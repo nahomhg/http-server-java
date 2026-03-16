@@ -53,7 +53,7 @@ public class Main {
           
           if(argumentsPassed.length > 0 && customHttpRequest.path().startsWith("/files/")) {
               indexOfDirectory = Arrays.asList(argumentsPassed).indexOf("--directory");
-              String fileName = customHttpRequest.path().substring(8);
+              String fileName = customHttpRequest.path().substring(7);
               if (indexOfDirectory != -1 && doesFileExist(argumentsPassed[indexOfDirectory + 1], fileName)) {
                   fileContent = getFileContent(argumentsPassed[indexOfDirectory + 1] + fileName);
                   String header = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: " + fileContent.length + "\r\n\r\n";
