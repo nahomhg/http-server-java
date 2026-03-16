@@ -59,7 +59,7 @@ public class Main {
               if(indexOfDirectory != -1 && doesFileExist(argumentsPassed[indexOfDirectory+1],fileName)){
                   System.out.println("got here:\n"+indexOfDirectory+"\t"+doesFileExist(argumentsPassed[indexOfDirectory+1],fileName));
                   fileContent = getFileContent(argumentsPassed[indexOfDirectory+1]+fileName);
-                  response = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\\nContent-Length: "+fileContent.length()+"\r\n\r\n"+fileContent+"!\n";
+                  response = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+fileContent.length()+"\r\n\r\n"+fileContent+"!\n";
               }else{
                   response = response_404;
               }
