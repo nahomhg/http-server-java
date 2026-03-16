@@ -7,10 +7,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 public class Main {
 
@@ -57,14 +55,18 @@ public class Main {
               indexOfDirectory = Arrays.asList(argumentsPassed).indexOf("--directory");
               String fileName = customHttpRequest.path().split("/")[2];
               if (indexOfDirectory != -1 && doesFileExist(argumentsPassed[indexOfDirectory + 1], fileName)) {
-                  System.out.println("got here:\n" + indexOfDirectory + "\t" + doesFileExist(argumentsPassed[indexOfDirectory + 1], fileName));
                   fileContent = getFileContent(argumentsPassed[indexOfDirectory + 1] + fileName);
-                  System.out.println("file: " + Arrays.toString(fileContent) + "\tlength: " + fileContent.length);
                   String header = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: " + fileContent.length + "\r\n\r\n";
                   OutputStream out = socket.getOutputStream();
                   out.write(header.getBytes(StandardCharsets.UTF_8));
                   out.write(fileContent);
-
+                /*
+                fileContent = getFileContent(argumentsPassed[indexOfDirectory + 1] + fileName);
+                byte[] customResponse = new CustomHttpResponse().setHttpType("HTTP/1.1").setStatusCode("200 OK").setHeaders(new HashMap<>("Content-Type" : "application/octet-stream", "Content-Length":fileContent.length));
+                OutputStream out = socket.getOutputStream();
+                  out.write(customResponse);
+                  out.write(fileContent);
+                                   */
               } else {
                   response = response_404;
               }
@@ -143,3 +145,80 @@ public class Main {
 
 record CustomHttpRequest(String method, String path, Map<String, String> headers, String body){};
 
+class CustomHttpResponse{
+
+    private String httpType;
+    private String statusCode;
+    private Map<String, String> headers;
+    private byte[] body;
+
+    public CustomHttpResponse(CustomHttpResponseBuilder builder){
+        this.httpType = builder.httpVersion;
+        this.statusCode = builder.statusCode;
+        this.headers = builder.headers;
+        this.body = builder.body;
+    }
+
+    public String getHttpType() {
+        return httpType;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public byte[] getBody() {
+        return body;
+    }
+
+    public static class CustomHttpResponseBuilder{
+        private String httpVersion;
+        private String statusCode;
+        private Map<String, String> headers;
+        private byte[] body;
+
+        public CustomHttpResponseBuilder httpVersion(String httpType){
+            this.httpVersion = httpType;
+            return this;
+        }
+
+        public CustomHttpResponseBuilder statusCode(String statusCode){
+            this.statusCode = statusCode;
+            return this;
+        }
+
+        public CustomHttpResponseBuilder headers(Map<String, String> headers){
+            this.headers = headers;
+            return this;
+        }
+
+        public CustomHttpResponseBuilder body(byte[] body){
+            this.body = body;
+            return this;
+        }
+
+        public CustomHttpResponse build(){
+            return new CustomHttpResponse(this);
+        }
+
+        public void send(OutputStream outputStream) throws IOException {
+            StringBuilder responseText = new StringBuilder();
+            responseText.append(httpVersion).append(" ").append(statusCode).append("\r\n");
+            for(String i : headers.keySet()){
+                responseText.append(i).append(": ").append(headers.get(i));
+            }
+            responseText.append("\r\n\r\n");
+            outputStream.write(responseText.toString().getBytes(StandardCharsets.UTF_8));
+            if(body!= null){
+                outputStream.write(body);
+            }
+        }
+    }
+/*
+
+ */
+}
