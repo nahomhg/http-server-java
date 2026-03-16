@@ -122,7 +122,6 @@ public class Main {
         String line;
         while((line = br.readLine()) != null){
             fileContent.append(line);
-            fileContent.append("\n");
         }
         return fileContent.toString();
 
