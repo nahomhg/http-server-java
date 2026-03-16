@@ -88,6 +88,7 @@ public class Main {
       String[] requestArray = request.split("\r\n");
       String requestMethod = requestArray[0].split("\\s+")[0];
       String requestPath = requestArray[0].split("\\s+")[1];
+      System.out.println("reqest "+requestPath);
       HashMap<String, String> headers = new HashMap<>();
       int i = 1;
       while(i <requestArray.length && !requestArray[i].equals("")){
