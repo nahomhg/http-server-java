@@ -56,12 +56,16 @@ public class Main {
           if(argumentsPassed.length > 0 && customHttpRequest.path().startsWith("/files/")) {
               indexOfDirectory = Arrays.asList(argumentsPassed).indexOf("--directory");
               String fileName = customHttpRequest.path().split("/")[2];
-              if(indexOfDirectory != -1 && doesFileExist(argumentsPassed[indexOfDirectory+1],fileName)){
-                  System.out.println("got here:\n"+indexOfDirectory+"\t"+doesFileExist(argumentsPassed[indexOfDirectory+1],fileName));
-                  fileContent = getFileContent(argumentsPassed[indexOfDirectory+1]+fileName);
-                  System.out.println("file: "+Arrays.toString(fileContent)+"\tlength: "+fileContent.length);
-                  response = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+fileContent.length+"\r\n\r\n"+ Arrays.toString(fileContent) +"\n";
-              }else{
+              if (indexOfDirectory != -1 && doesFileExist(argumentsPassed[indexOfDirectory + 1], fileName)) {
+                  System.out.println("got here:\n" + indexOfDirectory + "\t" + doesFileExist(argumentsPassed[indexOfDirectory + 1], fileName));
+                  fileContent = getFileContent(argumentsPassed[indexOfDirectory + 1] + fileName);
+                  System.out.println("file: " + Arrays.toString(fileContent) + "\tlength: " + fileContent.length);
+                  String header = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: " + fileContent.length + "\r\n\r\n";
+                  OutputStream out = socket.getOutputStream();
+                  out.write(header.getBytes(StandardCharsets.UTF_8));
+                  out.write(fileContent);
+
+              } else {
                   response = response_404;
               }
           }
@@ -80,7 +84,6 @@ public class Main {
           }
 
           socket.getOutputStream().write(response.getBytes());
-
       }
   }
 
@@ -112,25 +115,32 @@ public class Main {
   private static byte[] getFileContent(String filePath) throws IOException {
       return Files.readAllBytes(Path.of(filePath));
   }
-//      StringBuilder fileContent = new StringBuilder();
-//      Path path = new File(filePath).toPath();
+
+//  private static void manageFiles(CustomHttpRequest customHttpRequest, String[] argumentsPassed, Socket socket){
+//      try {
+//          byte[] fileContent = "";
+//          String header = "";
 //
-//      try(BufferedReader br = new
-//              BufferedReader(
-//                      new InputStreamReader(Files.newInputStream(path),StandardCharsets.UTF_8)
-//                      )){
-//        String line;
-//        while((line = br.readLine()) != null){
-//            fileContent.append(line);
-//        }
-//        return fileContent.toString();
-//
-//      }catch(IOException exception){
-//        exception.getMessage();
+//          int indexOfDirectory = Arrays.asList(argumentsPassed).indexOf("--directory");
+//          String fileName = customHttpRequest.path().split("/")[2];
+//          if (indexOfDirectory != -1 && doesFileExist(argumentsPassed[indexOfDirectory + 1], fileName)) {
+//              System.out.println("got here:\n" + indexOfDirectory + "\t" + doesFileExist(argumentsPassed[indexOfDirectory + 1], fileName));
+//              fileContent = getFileContent(argumentsPassed[indexOfDirectory + 1] + fileName);
+//              System.out.println("file: " + Arrays.toString(fileContent) + "\tlength: " + fileContent.length);
+//              header = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: " + fileContent.length + "\r\n\r\n";
+//              OutputStream out = socket.getOutputStream();
+//              out.write(header.getBytes(StandardCharsets.UTF_8));
+//              out.write(fileContent);
+//          } else {
+//              response = response_404;
+//          }
+//      }catch(IOException e){
+//          e.printStackTrace();
 //      }
-//      return "";
+  }
 
 }
 
 
 record CustomHttpRequest(String method, String path, Map<String, String> headers, String body){};
+
