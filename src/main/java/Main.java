@@ -50,17 +50,17 @@ public class Main {
           String request = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
           CustomHttpRequest customHttpRequest = getHttpRequest(request);
           String response = "";
-          String fileContent = "";
+          byte[] fileContent;
           int indexOfDirectory = 0;
           
-          if(argumentsPassed.length > 0) {
+          if(argumentsPassed.length > 0 && customHttpRequest.path().startsWith("/files/")) {
               indexOfDirectory = Arrays.asList(argumentsPassed).indexOf("--directory");
               String fileName = customHttpRequest.path().split("/")[2];
               if(indexOfDirectory != -1 && doesFileExist(argumentsPassed[indexOfDirectory+1],fileName)){
                   System.out.println("got here:\n"+indexOfDirectory+"\t"+doesFileExist(argumentsPassed[indexOfDirectory+1],fileName));
                   fileContent = getFileContent(argumentsPassed[indexOfDirectory+1]+fileName);
-                  System.out.println("file: "+fileContent+"\tlength: "+fileContent.length());
-                  response = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+fileContent.length()+"\r\n\r\n"+fileContent+"!\n";
+                  System.out.println("file: "+Arrays.toString(fileContent)+"\tlength: "+fileContent.length);
+                  response = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+fileContent.length+"\r\n\r\n"+ Arrays.toString(fileContent) +"\n";
               }else{
                   response = response_404;
               }
@@ -97,8 +97,6 @@ public class Main {
       String body = (i + 1 < requestArray.length) ? requestArray[i+1] : "";
       return new CustomHttpRequest(requestMethod, requestPath, headers, body);
   }
-
-
   
 
   private static String getHeader(Map<String, String> headers, String headerName){
@@ -111,25 +109,27 @@ public class Main {
       return file.exists();
   }
 
-  private static String getFileContent(String filePath) {
-      StringBuilder fileContent = new StringBuilder();
-      Path path = new File(filePath).toPath();
-
-      try(BufferedReader br = new
-              BufferedReader(
-                      new InputStreamReader(Files.newInputStream(path),StandardCharsets.UTF_8)
-                      )){
-        String line;
-        while((line = br.readLine()) != null){
-            fileContent.append(line);
-        }
-        return fileContent.toString();
-
-      }catch(IOException exception){
-        exception.getMessage();
-      }
-      return "";
+  private static byte[] getFileContent(String filePath) throws IOException {
+      return Files.readAllBytes(Path.of(filePath));
   }
+//      StringBuilder fileContent = new StringBuilder();
+//      Path path = new File(filePath).toPath();
+//
+//      try(BufferedReader br = new
+//              BufferedReader(
+//                      new InputStreamReader(Files.newInputStream(path),StandardCharsets.UTF_8)
+//                      )){
+//        String line;
+//        while((line = br.readLine()) != null){
+//            fileContent.append(line);
+//        }
+//        return fileContent.toString();
+//
+//      }catch(IOException exception){
+//        exception.getMessage();
+//      }
+//      return "";
+
 }
 
 
