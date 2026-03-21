@@ -70,10 +70,9 @@ public class HttpServer {
             String response = "";
             OutputStream output = socket.getOutputStream();
             if (customHttpRequest.path().startsWith("/files/")) {
-                int indexOfDirectory = Arrays.asList(this.directory).indexOf("--directory");
                 String fileName = customHttpRequest.path().substring(7);
-                if (indexOfDirectory != -1 && doesFileExist(this.directory, fileName)) {
-                    byte[] fileContent = getFileContent(indexOfDirectory + 1 + fileName);
+                if (this.directory != null && doesFileExist(this.directory, fileName)) {
+                    byte[] fileContent = getFileContent(this.directory + fileName);
                     String header = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: " + fileContent.length + "\r\n\r\n";
                     OutputStream out = socket.getOutputStream();
                     out.write(header.getBytes(StandardCharsets.UTF_8));
@@ -105,7 +104,6 @@ public class HttpServer {
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(this.directory+fileName))){
             OutputStream output = socket.getOutputStream();
-            //byte[] body = getFileContent(pathToPost);
             writer.write(customHttpRequest.body());
             writer.close();
             output.write(HTTP_201.getBytes());
