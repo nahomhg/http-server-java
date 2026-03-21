@@ -103,7 +103,7 @@ public class HttpServer {
     private void handlePost(Socket socket, CustomHttpRequest customHttpRequest){
         String pathToPost = customHttpRequest.path();
         String fileName = pathToPost.substring(7);
-
+        System.out.println("path: "+pathToPost+"\nfile: "+fileName);
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(pathToPost))){
             OutputStream output = socket.getOutputStream();
             //byte[] body = getFileContent(pathToPost);
