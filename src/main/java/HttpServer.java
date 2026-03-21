@@ -111,7 +111,7 @@ public class HttpServer {
             writer.close();
             output.write(HTTP_201.getBytes());
             output.close();
-            System.out.println(doesFileExist(customHttpRequest.path(),fileName));
+            System.out.println(doesFileExist(this.directory,fileName));
         }catch (IOException e){
             e.printStackTrace();
         }
