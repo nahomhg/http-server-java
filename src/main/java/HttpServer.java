@@ -18,7 +18,7 @@ public class HttpServer {
     private final String directory;
 
     private static final String HTTP_200 = "HTTP/1.1 200 OK\r\n\r\n";
-    private static final String HTTP_201 = "HTTP/1.1 201 CREATED\r\n\r\n";
+    private static final String HTTP_201 = "HTTP/1.1 201 Created\r\n\r\n";
     private static final String HTTP_404 = "HTTP/1.1 404 NOT FOUND\r\n\r\n";
 
 
@@ -101,9 +101,7 @@ public class HttpServer {
     }
 
     private void handlePost(Socket socket, CustomHttpRequest customHttpRequest){
-        String pathToPost = customHttpRequest.path();
-        String fileName = pathToPost.substring(7);
-        System.out.println("path: "+pathToPost+"\nfile: "+fileName);
+        String fileName = customHttpRequest.path().substring(7);
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
             OutputStream output = socket.getOutputStream();
             //byte[] body = getFileContent(pathToPost);
