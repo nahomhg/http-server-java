@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -19,6 +16,11 @@ public class HttpServer {
     private final ServerSocket serverSocket;
     private final ExecutorService service;
     private final String directory;
+
+    private static final String HTTP_200 = "HTTP/1.1 200 OK\r\n\r\n";
+    private static final String HTTP_201 = "HTTP/1.1 201 CREATED\r\n\r\n";
+    private static final String HTTP_404 = "HTTP/1.1 404 NOT FOUND\r\n\r\n";
+
 
     public HttpServer(ServerSocket serverSocket, String directory) throws SocketException {
         this.serverSocket = serverSocket;
@@ -66,10 +68,7 @@ public class HttpServer {
     private void handleGet(Socket socket, CustomHttpRequest customHttpRequest){
         try {
             String response = "";
-            String response_200 = "HTTP/1.1 200 OK\r\n\r\n";
-            String response_201 = "HTTP/1.1 201 CREATED\r\n\r\n";
-            String response_404 = "HTTP/1.1 404 Not Found\r\n\r\n";
-
+            OutputStream output = socket.getOutputStream();
             if (customHttpRequest.path().startsWith("/files/")) {
                 int indexOfDirectory = Arrays.asList(this.directory).indexOf("--directory");
                 String fileName = customHttpRequest.path().substring(7);
@@ -81,10 +80,10 @@ public class HttpServer {
                     out.write(fileContent);
 
                 } else {
-                    response = response_404;
+                    response = HTTP_404;
                 }
             } else if (customHttpRequest.path().equals("/")) {
-                response = response_200;
+                response = HTTP_200;
             } else if (customHttpRequest.path().startsWith("/echo/") && !customHttpRequest.path().substring(6).isEmpty()) {
                 String pathStr = customHttpRequest.path().substring(6);
                 response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + pathStr.length() + "\r\n\r\n" + pathStr + "\n";
@@ -92,24 +91,35 @@ public class HttpServer {
                 String userAgentContent = getHeader(customHttpRequest.headers(), "User-Agent");
                 response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + userAgentContent.length() + "\r\n\r\n" + userAgentContent + "\n";
             } else {
-                response = response_404;
+                response = HTTP_404;
             }
-
-            socket.getOutputStream().write(response.getBytes());
+            output.write(response.getBytes());
+            output.close();
         }catch (IOException e){
             e.printStackTrace();
         }
     }
 
     private void handlePost(Socket socket, CustomHttpRequest customHttpRequest){
+        String pathToPost = customHttpRequest.path();
+        String fileName = pathToPost.substring(7);
 
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(pathToPost))){
+            OutputStream output = socket.getOutputStream();
+            //byte[] body = getFileContent(pathToPost);
+            writer.write(customHttpRequest.body());
+            writer.close();
+            output.write(HTTP_201.getBytes());
+            output.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     private static CustomHttpRequest getHttpRequest(String request){
         String[] requestArray = request.split("\r\n");
         String requestMethod = requestArray[0].split("\\s+")[0];
         String requestPath = requestArray[0].split("\\s+")[1];
-        System.out.println("reqest "+requestPath);
         HashMap<String, String> headers = new HashMap<>();
         int i = 1;
         while(i <requestArray.length && !requestArray[i].equals("")){
