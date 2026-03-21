@@ -102,9 +102,8 @@ public class HttpServer {
 
     private void handlePost(Socket socket, CustomHttpRequest customHttpRequest){
         String fileName = customHttpRequest.path().substring(7);
-        File fileToCreate = new File(this.directory+fileName);
-        System.out.println(fileToCreate.exists());
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
+
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(this.directory+fileName))){
             OutputStream output = socket.getOutputStream();
             //byte[] body = getFileContent(pathToPost);
             writer.write(customHttpRequest.body());
