@@ -19,7 +19,7 @@ public class HttpServer {
 
     private static final String HTTP_200 = "HTTP/1.1 200 OK\r\n\r\n";
     private static final String HTTP_201 = "HTTP/1.1 201 Created\r\n\r\n";
-    private static final String HTTP_404 = "HTTP/1.1 404 NOT FOUND\r\n\r\n";
+    private static final String HTTP_404 = "HTTP/1.1 404 Not Found\r\n\r\n";
 
 
     public HttpServer(ServerSocket serverSocket, String directory) throws SocketException {
