@@ -1,20 +1,17 @@
 import java.io.*;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Main {
     public static void main(String[] args) {
         int indexOfDirectory = Arrays.asList(args).indexOf("--directory");
         try{
-            HttpServer httpServer = new HttpServer(new ServerSocket(4221), args[indexOfDirectory+1]);
+            ServerSocket serverSocket = new ServerSocket(4221);
+
+            HttpServer httpServer = indexOfDirectory != -1 ?
+                    new HttpServer(serverSocket, args[indexOfDirectory]) :
+                    new HttpServer(serverSocket);
+
             httpServer.startServer();
         }catch (IOException e){
             e.printStackTrace();

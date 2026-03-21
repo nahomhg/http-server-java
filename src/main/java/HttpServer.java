@@ -5,22 +5,27 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class HttpServer {
 
     private final ServerSocket serverSocket;
     private final ExecutorService service;
     private final String directory;
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     private static final String HTTP_200 = "HTTP/1.1 200 OK\r\n\r\n";
     private static final String HTTP_201 = "HTTP/1.1 201 Created\r\n\r\n";
     private static final String HTTP_404 = "HTTP/1.1 404 Not Found\r\n\r\n";
 
+    public HttpServer(ServerSocket socket) throws SocketException {
+        this(socket, "");
+    }
 
     public HttpServer(ServerSocket serverSocket, String directory) throws SocketException {
         this.serverSocket = serverSocket;
@@ -52,7 +57,6 @@ public class HttpServer {
             if (readByteCount != -1) {
                 String requestString = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
                 CustomHttpRequest httpRequest = getHttpRequest(requestString);
-                System.out.println("Dir: "+this.directory+"\nRequest: "+httpRequest);
                 if (httpRequest.method().equals("POST")) {
                     handlePost(socket, httpRequest);
                 } else if (httpRequest.method().equals("GET")) {
@@ -71,7 +75,7 @@ public class HttpServer {
             OutputStream output = socket.getOutputStream();
             if (customHttpRequest.path().startsWith("/files/")) {
                 String fileName = customHttpRequest.path().substring(7);
-                if (this.directory != null && doesFileExist(this.directory, fileName)) {
+                if (doesFileExist(this.directory, fileName)) {
                     byte[] fileContent = getFileContent(this.directory + fileName);
                     String header = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: " + fileContent.length + "\r\n\r\n";
                     OutputStream out = socket.getOutputStream();
