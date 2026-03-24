@@ -9,7 +9,7 @@ public class Main {
             ServerSocket serverSocket = new ServerSocket(4221);
 
             HttpServer httpServer = indexOfDirectory != -1 ?
-                    new HttpServer(serverSocket, args[indexOfDirectory]) :
+                    new HttpServer(serverSocket, args[indexOfDirectory + 1]) :
                     new HttpServer(serverSocket);
 
             httpServer.startServer();

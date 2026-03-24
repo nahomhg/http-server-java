@@ -29,7 +29,7 @@ public class HttpServer {
 
     public HttpServer(ServerSocket serverSocket, String directory) throws SocketException {
         this.serverSocket = serverSocket;
-        this.directory = directory + 1;
+        this.directory = directory;
         this.service = Executors.newFixedThreadPool(10);
         this.serverSocket.setReuseAddress(true);
 
