@@ -118,17 +118,22 @@ public class HttpServer {
         }
     }
 
-    private void handlePost(Socket socket, CustomHttpRequest customHttpRequest){
-        String fileName = customHttpRequest.path().substring(7);
-        File outputFile = new File(this.directory+fileName);
-
-        try(FileOutputStream file = new FileOutputStream(outputFile)){
+    private void handlePost(Socket socket, CustomHttpRequest customHttpRequest) {
+        try {
             OutputStream output = socket.getOutputStream();
-            file.write(customHttpRequest.body());
-            output.write(HTTP_201.getBytes());
-            output.close();
-            System.out.println(doesFileExist(this.directory,fileName));
-        }catch (IOException e){
+            if (customHttpRequest.path().startsWith("/files/")) {
+
+                String fileName = customHttpRequest.path().substring(7);
+                File outputFile = new File(this.directory + fileName);
+
+                FileOutputStream file = new FileOutputStream(outputFile);
+
+                file.write(customHttpRequest.body());
+                output.write(HTTP_201.getBytes());
+                output.close();
+                System.out.println(doesFileExist(this.directory, fileName));
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
