@@ -121,6 +121,7 @@ public class HttpServer {
     private void handlePost(Socket socket, CustomHttpRequest customHttpRequest) {
         try {
             OutputStream output = socket.getOutputStream();
+            System.out.println("DatA: "+customHttpRequest.body().length+"\tsize: "+Integer.parseInt(customHttpRequest.headers().get("Content-Length")));
             if (!customHttpRequest.path().startsWith("/files/") || customHttpRequest.body().length != Integer.parseInt(customHttpRequest.headers().get("Content-Length"))) {
                 output.write(HTTP_404.getBytes());
                 return;
