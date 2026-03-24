@@ -51,6 +51,7 @@ public class HttpServer {
     private void handleRequest(Socket socket)  {
         try {
             InputStream inputStream = socket.getInputStream();
+
             byte[] buffer = new byte[1024];
             int readByteCount = inputStream.read(buffer);
             if (readByteCount != -1) {
@@ -73,7 +74,15 @@ public class HttpServer {
                 CustomHttpRequest httpRequest = mapHttpRequest(requestString, payloadContent);
 
                 if (httpRequest.method().equals("POST")) {
-                        handlePost(socket, httpRequest);
+                        if(httpRequest.body().length != Integer.parseInt(httpRequest.headers().get("Content-Length"))){
+                            OutputStream outputStream = socket.getOutputStream();
+                            outputStream.write(HTTP_404.getBytes());
+                            outputStream.close();
+                            return;
+                        }
+                        else{
+                            handlePost(socket, httpRequest);
+                        }
                     } else if (httpRequest.method().equals("GET")) {
                         handleGet(socket, httpRequest);
                     }
@@ -121,8 +130,7 @@ public class HttpServer {
     private void handlePost(Socket socket, CustomHttpRequest customHttpRequest) {
         try {
             OutputStream output = socket.getOutputStream();
-            System.out.println("DatA: "+customHttpRequest.body().length+"\tsize: "+Integer.parseInt(customHttpRequest.headers().get("Content-Length")));
-            if (!customHttpRequest.path().startsWith("/files/") || customHttpRequest.body().length != Integer.parseInt(customHttpRequest.headers().get("Content-Length"))) {
+            if (!customHttpRequest.path().startsWith("/files/") ||) {
                 output.write(HTTP_404.getBytes());
                 return;
             }
@@ -148,11 +156,10 @@ public class HttpServer {
         String requestPath = requestArray[0].split("\\s+")[1];
         HashMap<String, String> headers = new HashMap<>();
         int i = 1;
-        while(i <requestArray.length && !requestArray[i].equals("")){
+        while(i < requestArray.length && !requestArray[i].equals("")){
             headers.put(requestArray[i].split(": ")[0],requestArray[i].split(": ")[1]);
             i++;
         }
-
         return new CustomHttpRequest(requestMethod, requestPath, headers, payload);
     }
 
