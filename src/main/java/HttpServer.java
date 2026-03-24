@@ -130,7 +130,7 @@ public class HttpServer {
     private void handlePost(Socket socket, CustomHttpRequest customHttpRequest) {
         try {
             OutputStream output = socket.getOutputStream();
-            if (!customHttpRequest.path().startsWith("/files/") ||) {
+            if (!customHttpRequest.path().startsWith("/files/")) {
                 output.write(HTTP_404.getBytes());
                 return;
             }
