@@ -121,18 +121,20 @@ public class HttpServer {
     private void handlePost(Socket socket, CustomHttpRequest customHttpRequest) {
         try {
             OutputStream output = socket.getOutputStream();
-            if (customHttpRequest.path().startsWith("/files/")) {
-
-                String fileName = customHttpRequest.path().substring(7);
-                File outputFile = new File(this.directory + fileName);
-
-                FileOutputStream file = new FileOutputStream(outputFile);
-
-                file.write(customHttpRequest.body());
-                output.write(HTTP_201.getBytes());
-                output.close();
-                System.out.println(doesFileExist(this.directory, fileName));
+            if (!customHttpRequest.path().startsWith("/files/") || customHttpRequest.body().length != Integer.parseInt(customHttpRequest.headers().get("Content-Length"))) {
+                output.write(HTTP_404.getBytes());
+                return;
             }
+            String fileName = customHttpRequest.path().substring(7);
+            File outputFile = new File(this.directory + fileName);
+
+            FileOutputStream file = new FileOutputStream(outputFile);
+
+            file.write(customHttpRequest.body());
+            output.write(HTTP_201.getBytes());
+            System.out.println(doesFileExist(this.directory, fileName));
+            output.close();
+            file.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
