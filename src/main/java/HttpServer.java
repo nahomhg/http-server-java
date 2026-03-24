@@ -5,9 +5,10 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -52,18 +53,32 @@ public class HttpServer {
         try {
             InputStream inputStream = socket.getInputStream();
             byte[] buffer = new byte[1024];
-            System.out.println("byte[]: "+buffer.toString());
             int readByteCount = inputStream.read(buffer);
-
             if (readByteCount != -1) {
-                String requestString = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
-                CustomHttpRequest httpRequest = getHttpRequest(requestString);
-                if (httpRequest.method().equals("POST")) {
-                    handlePost(socket, httpRequest);
-                } else if (httpRequest.method().equals("GET")) {
-                    handleGet(socket, httpRequest);
+                int messageHeaderLength = -1;
+                int payloadIndex = -1;
+
+                for(int i = 0; i <= readByteCount; i++){
+                    if((i + 3 < readByteCount) && buffer[i] == 13 && buffer[i+1] == 10 && buffer[i+2] == 13 && buffer[i+3] == 10){
+                        messageHeaderLength = i;
+                        payloadIndex = messageHeaderLength + 4;
+                        break;
+                    }else if(i == readByteCount){
+                        messageHeaderLength = i;
+                    }
                 }
-            }
+
+                byte[] payloadContent = Arrays.copyOfRange(buffer, payloadIndex, readByteCount);
+
+                String requestString = new String(buffer, 0, messageHeaderLength, StandardCharsets.UTF_8);
+                CustomHttpRequest httpRequest = mapHttpRequest(requestString, payloadContent);
+
+                if (httpRequest.method().equals("POST")) {
+                        handlePost(socket, httpRequest);
+                    } else if (httpRequest.method().equals("GET")) {
+                        handleGet(socket, httpRequest);
+                    }
+                }
             socket.close();
         }catch (IOException e){
             e.printStackTrace();
@@ -106,11 +121,11 @@ public class HttpServer {
 
     private void handlePost(Socket socket, CustomHttpRequest customHttpRequest){
         String fileName = customHttpRequest.path().substring(7);
+        File outputFile = new File(this.directory+fileName);
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(this.directory+fileName))){
+        try(FileOutputStream file = new FileOutputStream(outputFile)){
             OutputStream output = socket.getOutputStream();
-            writer.write(customHttpRequest.body());
-            writer.close();
+            file.write(customHttpRequest.body());
             output.write(HTTP_201.getBytes());
             output.close();
             System.out.println(doesFileExist(this.directory,fileName));
@@ -119,7 +134,8 @@ public class HttpServer {
         }
     }
 
-    private static CustomHttpRequest getHttpRequest(String request){
+    private static CustomHttpRequest mapHttpRequest(String request, byte[] payload){
+
         String[] requestArray = request.split("\r\n");
         String requestMethod = requestArray[0].split("\\s+")[0];
         String requestPath = requestArray[0].split("\\s+")[1];
@@ -129,8 +145,8 @@ public class HttpServer {
             headers.put(requestArray[i].split(": ")[0],requestArray[i].split(": ")[1]);
             i++;
         }
-        String body = (i + 1 < requestArray.length) ? requestArray[i+1] : "";
-        return new CustomHttpRequest(requestMethod, requestPath, headers, body);
+
+        return new CustomHttpRequest(requestMethod, requestPath, headers, payload);
     }
 
     private static String getHeader(Map<String, String> headers, String headerName){
@@ -148,6 +164,6 @@ public class HttpServer {
     }
 
 }
-record CustomHttpRequest(String method, String path, Map<String, String> headers, String body){};
+record CustomHttpRequest(String method, String path, Map<String, String> headers, byte[] body){};
 
 
