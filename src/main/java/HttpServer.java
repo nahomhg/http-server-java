@@ -52,6 +52,7 @@ public class HttpServer {
         try {
             InputStream inputStream = socket.getInputStream();
             byte[] buffer = new byte[1024];
+            System.out.println("byte[]: "+buffer.toString());
             int readByteCount = inputStream.read(buffer);
 
             if (readByteCount != -1) {

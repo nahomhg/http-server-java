@@ -1,4 +1,4 @@
-[![progress-banner](https://backend.codecrafters.io/progress/http-server/4c4869f5-d3f0-4fa8-8c15-0608583836a8)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+t [![progress-banner](https://backend.codecrafters.io/progress/http-server/4c4869f5-d3f0-4fa8-8c15-0608583836a8)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
 
 This is a starting point for Java solutions to the
 ["Build Your Own HTTP server" Challenge](https://app.codecrafters.io/courses/http-server/overview).
