@@ -73,7 +73,7 @@ public class HttpServer {
                 String requestString = new String(buffer, 0, messageHeaderLength, StandardCharsets.UTF_8);
                 if(requestString.contains("Host:")){
                     int contentLengthDefinedIndex = requestString.indexOf("Host:");
-                    System.out.println("Data: "+requestString.substring(contentLengthDefinedIndex, contentLengthDefinedIndex+5));
+                    System.out.println("Data: "+requestString.substring(contentLengthDefinedIndex, contentLengthDefinedIndex+7));
                 }
                 CustomHttpRequest httpRequest = mapHttpRequest(requestString, payloadContent);
 
