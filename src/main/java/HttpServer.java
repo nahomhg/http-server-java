@@ -71,7 +71,10 @@ public class HttpServer {
                 byte[] payloadContent = Arrays.copyOfRange(buffer, payloadIndex, readByteCount);
 
                 String requestString = new String(buffer, 0, messageHeaderLength, StandardCharsets.UTF_8);
-                System.out.println("Request content: "+requestString+"\nEnd Of Request");
+                if(requestString.contains("Host:")){
+                    int contentLengthDefinedIndex = requestString.indexOf("Host:");
+                    System.out.println("Data: "+requestString.substring(contentLengthDefinedIndex, contentLengthDefinedIndex+5));
+                }
                 CustomHttpRequest httpRequest = mapHttpRequest(requestString, payloadContent);
 
                 if (httpRequest.method().equals("POST") && httpRequest.headers().get("Content-Length") != null) {
