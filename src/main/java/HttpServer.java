@@ -48,49 +48,18 @@ public class HttpServer {
         }
     }
 
-    private void handleRequest(Socket socket)  {
+    private void handleRequest(Socket socket) {
         try {
             InputStream inputStream = socket.getInputStream();
+            OutputStream outputStream = socket.getOutputStream();
 
-            byte[] buffer = new byte[1024];
-            int readByteCount = inputStream.read(buffer);
-            if (readByteCount != -1) {
-                int messageHeaderLength = -1;
-                int payloadIndex = -1;
+            CustomHttpRequest httpRequest = RequestParser.parser(inputStream);
 
-                for(int i = 0; i <= readByteCount; i++){
-                    if((i + 3 < readByteCount) && buffer[i] == 13 && buffer[i+1] == 10 && buffer[i+2] == 13 && buffer[i+3] == 10){
-                        messageHeaderLength = i;
-                        payloadIndex = messageHeaderLength + 4;
-                        break;
-                    }else if(i == readByteCount){
-                        messageHeaderLength = i;
-                    }
-                }
-
-                byte[] payloadContent = Arrays.copyOfRange(buffer, payloadIndex, readByteCount);
-
-                String requestString = new String(buffer, 0, messageHeaderLength, StandardCharsets.UTF_8);
-                if(requestString.contains("Host:")){
-                    int contentLengthDefinedIndex = requestString.indexOf("Host:");
-                    System.out.println("Data: "+requestString.substring(contentLengthDefinedIndex, contentLengthDefinedIndex+7));
-                }
-                CustomHttpRequest httpRequest = mapHttpRequest(requestString, payloadContent);
-
-                if (httpRequest.method().equals("POST") && httpRequest.headers().get("Content-Length") != null) {
-                        if(httpRequest.body().length != Integer.parseInt(httpRequest.headers().get("Content-Length"))){
-                            OutputStream outputStream = socket.getOutputStream();
-                            outputStream.write(HTTP_404.getBytes());
-                            outputStream.close();
-                            return;
-                        }
-                        else{
-                            handlePost(socket, httpRequest);
-                        }
-                    } else if (httpRequest.method().equals("GET")) {
-                        handleGet(socket, httpRequest);
-                    }
-                }
+            if (httpRequest.method().equals("POST")) {
+                handlePost(socket, httpRequest);
+            } else {
+                handleGet(socket, httpRequest);
+            }
             socket.close();
         }catch (IOException e){
             e.printStackTrace();
@@ -153,6 +122,78 @@ public class HttpServer {
         }
     }
 
+
+
+    private String getHeader(Map<String, String> headers, String headerName){
+        return headers.getOrDefault(headerName, "");
+    }
+
+    private boolean doesFileExist(String directory, String fileName){
+        File file = new File(directory+fileName);
+        System.out.println("file info: "+file.getPath()+"\t"+fileName);
+        return file.exists();
+    }
+
+    private byte[] getFileContent(String filePath) throws IOException {
+        return Files.readAllBytes(Path.of(filePath));
+    }
+
+}
+
+class RequestParser{
+
+    public static CustomHttpRequest parser(InputStream inputStream) {
+        try {
+            byte[] buffer = new byte[1024];
+            int readByteCount = inputStream.read(buffer);
+            if (readByteCount != -1) {
+                int messageHeaderLength = -1;
+                int payloadIndex = -1;
+
+                for (int i = 0; i <= readByteCount; i++) {
+                    if ((i + 3 < readByteCount) && buffer[i] == 13 && buffer[i + 1] == 10 && buffer[i + 2] == 13 && buffer[i + 3] == 10) {
+                        messageHeaderLength = i;
+                        payloadIndex = messageHeaderLength + 4;
+                        break;
+                    } else if (i == readByteCount) {
+                        messageHeaderLength = i;
+                    }
+                }
+
+                byte[] payloadContent = Arrays.copyOfRange(buffer, payloadIndex, readByteCount);
+
+                String requestString = new String(buffer, 0, messageHeaderLength, StandardCharsets.UTF_8);
+                int expectedContentLength = 0;
+                for (String line : requestString.split("\r\n")) {
+                    if (line.toLowerCase().startsWith("content-length:")) {
+                        expectedContentLength = Integer.parseInt(line.substring(15).trim());
+                        break;
+                    }
+                }
+                int remainingBytes = expectedContentLength - payloadContent.length;
+                byte[] completePayload = payloadContent;
+                if (remainingBytes > 0) {
+                    byte[] restOfPayload = new byte[remainingBytes];
+                    int totalRead = 0;
+                    while (totalRead < remainingBytes) {
+                        int bytesRead = inputStream.read(restOfPayload, totalRead, remainingBytes - totalRead);
+                        if (bytesRead == -1) {
+                            break; // Client has disconnected;
+                        }
+                        totalRead += bytesRead;
+                    }
+                    completePayload = new byte[expectedContentLength];
+                    System.arraycopy(payloadContent, 0, completePayload, 0, payloadContent.length);
+                    System.arraycopy(restOfPayload, 0, completePayload, payloadContent.length, restOfPayload.length);
+                }
+                return mapHttpRequest(requestString, completePayload);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        throw new RuntimeException("error");
+    }
+
     private static CustomHttpRequest mapHttpRequest(String request, byte[] payload){
 
         String[] requestArray = request.split("\r\n");
@@ -166,22 +207,8 @@ public class HttpServer {
         }
         return new CustomHttpRequest(requestMethod, requestPath, headers, payload);
     }
-
-    private static String getHeader(Map<String, String> headers, String headerName){
-        return headers.getOrDefault(headerName, "");
-    }
-
-    private static boolean doesFileExist(String directory, String fileName){
-        File file = new File(directory+fileName);
-        System.out.println("file info: "+file.getPath()+"\t"+fileName);
-        return file.exists();
-    }
-
-    private static byte[] getFileContent(String filePath) throws IOException {
-        return Files.readAllBytes(Path.of(filePath));
-    }
-
 }
+
 record CustomHttpRequest(String method, String path, Map<String, String> headers, byte[] body){};
 
 
