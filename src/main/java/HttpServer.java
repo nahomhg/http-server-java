@@ -51,7 +51,6 @@ public class HttpServer {
     private void handleRequest(Socket socket) {
         try {
             InputStream inputStream = socket.getInputStream();
-            OutputStream outputStream = socket.getOutputStream();
 
             CustomHttpRequest httpRequest = RequestParser.parser(inputStream);
 
@@ -122,8 +121,6 @@ public class HttpServer {
         }
     }
 
-
-
     private String getHeader(Map<String, String> headers, String headerName){
         return headers.getOrDefault(headerName, "");
     }
@@ -163,6 +160,7 @@ class RequestParser{
                 byte[] payloadContent = Arrays.copyOfRange(buffer, payloadIndex, readByteCount);
 
                 String requestString = new String(buffer, 0, messageHeaderLength, StandardCharsets.UTF_8);
+                
                 int expectedContentLength = 0;
                 for (String line : requestString.split("\r\n")) {
                     if (line.toLowerCase().startsWith("content-length:")) {
