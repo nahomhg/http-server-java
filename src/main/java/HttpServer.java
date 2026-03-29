@@ -145,10 +145,10 @@ public class HttpServer {
             for(String encoding : encodingHeader.split(", ")){
                 if(encoding.equalsIgnoreCase("gzip")){
                     return encoding;
-                    break;
                 }
             }
         }
+        return "";
     }
 }
 
