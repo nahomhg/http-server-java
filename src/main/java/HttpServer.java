@@ -204,6 +204,7 @@ class RequestParser{
             headers.put(requestArray[i].split(": ")[0],requestArray[i].split(": ")[1]);
             i++;
         }
+        System.out.println(headers);
 
         return new CustomHttpRequest(requestMethod, requestPath, headers, payload);
     }
