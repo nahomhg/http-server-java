@@ -85,7 +85,12 @@ public class HttpServer {
                 response = HTTP_200;
             } else if (customHttpRequest.path().startsWith("/echo/") && !customHttpRequest.path().substring(6).isEmpty()) {
                 String pathStr = customHttpRequest.path().substring(6);
-                response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + pathStr.length() + "\r\n\r\n" + pathStr + "\n";
+                if(customHttpRequest.headers().containsKey("Accept-Encoding")){
+                    String encodingType = extractEncoding(customHttpRequest.headers().get("Accept-Encoding"));
+                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: "+encodingType+"\r\n\r\n";
+                }else {
+                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + pathStr.length() + "\r\n\r\n" + pathStr + "\n";
+                }
             } else if (customHttpRequest.path().equals("/user-agent")) {
                 String userAgentContent = getHeader(customHttpRequest.headers(), "User-Agent");
                 response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + userAgentContent.length() + "\r\n\r\n" + userAgentContent + "\n";
@@ -135,6 +140,16 @@ public class HttpServer {
         return Files.readAllBytes(Path.of(filePath));
     }
 
+    private String extractEncoding(String encodingHeader){
+        if(encodingHeader.toLowerCase().contains("gzip")){
+            for(String encoding : encodingHeader.split(", ")){
+                if(encoding.equalsIgnoreCase("gzip")){
+                    return encoding;
+                    break;
+                }
+            }
+        }
+    }
 }
 
 class RequestParser{
