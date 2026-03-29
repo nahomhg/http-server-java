@@ -198,11 +198,13 @@ class RequestParser{
         String requestMethod = requestArray[0].split("\\s+")[0];
         String requestPath = requestArray[0].split("\\s+")[1];
         HashMap<String, String> headers = new HashMap<>();
+        System.out.println("ReqArr: "+Arrays.toString(requestArray));
         int i = 1;
         while(i < requestArray.length && !requestArray[i].equals("")){
             headers.put(requestArray[i].split(": ")[0],requestArray[i].split(": ")[1]);
             i++;
         }
+
         return new CustomHttpRequest(requestMethod, requestPath, headers, payload);
     }
 }
