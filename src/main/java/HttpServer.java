@@ -87,7 +87,7 @@ public class HttpServer {
                 String pathStr = customHttpRequest.path().substring(6);
                 if(customHttpRequest.headers().containsKey("Accept-Encoding")){
                     String encodingType = extractEncoding(customHttpRequest.headers().get("Accept-Encoding"));
-                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: "+encodingType+"\r\nContent-Length"+32+"\r\n\r\n";
+                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: "+encodingType+"\r\nContent-Length: "+32+"\r\n\r\n";
                 }else {
                     response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + pathStr.length() + "\r\n\r\n" + pathStr + "\n";
                 }
