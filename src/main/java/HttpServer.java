@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class HttpServer {
 
@@ -85,7 +87,7 @@ public class HttpServer {
                 String pathStr = customHttpRequest.path().substring(6);
                 if(customHttpRequest.headers().containsKey("Accept-Encoding")){
                     String encodingType = extractEncoding(customHttpRequest.headers().get("Accept-Encoding"));
-                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: "+encodingType+"\r\n\r\n";
+                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: "+encodingType+"\r\nContent-Length"+32+"\r\n\r\n";
                 }else {
                     response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + pathStr.length() + "\r\n\r\n" + pathStr + "\n";
                 }
