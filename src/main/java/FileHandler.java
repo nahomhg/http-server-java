@@ -23,7 +23,6 @@ public class FileHandler implements RouteHandler{
             String fileName = request.path().substring(7);
             if (doesFileExist(this.directory, fileName)) {
                 byte[] fileContent = getFileContent(this.directory + fileName);
-                System.out.println("filecontent data"+fileContent.length);
                 return new HttpResponse.HttpResponseBuilder()
                         .setHttpStatus(HttpStatus.OK)
                         .addHeader("Content-Type","application/octet-stream")
