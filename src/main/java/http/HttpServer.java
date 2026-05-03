@@ -58,6 +58,9 @@ public class HttpServer {
                     break;
                 }
                 CustomHttpRequest request = httpRequest.get();
+                if(request.headers().containsKey("Connection") && request.headers().get("Connection").equalsIgnoreCase(" close")){
+                    break;
+                }
                 OutputStream output = socket.getOutputStream();
                 HttpResponse response = routerRequest.route(request);
                 System.out.println(request);
