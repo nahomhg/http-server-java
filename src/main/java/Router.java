@@ -11,6 +11,7 @@ public class Router {
     public HttpResponse route(CustomHttpRequest httpRequest){
         for(RouteHandler routeHandler : handlers){
             if(routeHandler.matchesHandler(httpRequest)){
+                System.out.println("Found match!"+routeHandler.getClass().getSimpleName());
                 return routeHandler.handle(httpRequest);
             }
         }
