@@ -15,7 +15,7 @@ public class EchoEncodingHandler implements RouteHandler{
         String encoding = request.headers().get("Accept-Encoding");
         byte[] buffer = request.path().substring(6).getBytes(StandardCharsets.UTF_8);
 
-        if(encoding.contains("gzip")) {
+        if(encoding != null && encoding.contains("gzip")) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             try (GZIPOutputStream gzip = new GZIPOutputStream(byteArrayOutputStream)) {
                 gzip.write(buffer);
