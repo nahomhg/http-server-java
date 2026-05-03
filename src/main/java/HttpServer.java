@@ -32,6 +32,7 @@ public class HttpServer {
         this.serverSocket.setReuseAddress(true);
         this.routerRequest = new Router();
         this.routerRequest.registerHandler(new EchoHandler());
+        this.routerRequest.registerHandler(new EchoEncodingHandler());
         this.routerRequest.registerHandler(new FileHandler(this.directory));
     }
 
