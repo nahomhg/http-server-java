@@ -27,6 +27,7 @@ public class FileHandler implements RouteHandler{
                         .setHttpStatus(HttpStatus.OK)
                         .addHeader("Content-Type","application/octet-stream")
                         .addHeader("Content-Length",String.valueOf(fileContent.length))
+                        .addBody(fileContent)
                         .build();
             }
         } catch (IOException e) {
