@@ -31,17 +31,9 @@ public class EchoEncodingHandler implements RouteHandler{
                     .build();
         }catch (IOException exception) {
             System.err.println("EXCEPTION: "+exception.getMessage());
-        }//        return new HttpResponse.HttpResponseBuilder()
-//                .setHttpStatus(HttpStatus.OK)
-//                .addHeader("Content-Encoding",encoding)
-//                .addHeader("Content-Type","text")
-//                .addHeader("Content-Length",)
-//
-//        """
-//
-//                Content-Encoding: gzip
-//                Content-Type: text/plain
-//                Content-Length: 23"""
-        return null;
+        }
+        return new HttpResponse.HttpResponseBuilder()
+                .setHttpStatus(HttpStatus.NOT_FOUND)
+                .build();
     }
 }
