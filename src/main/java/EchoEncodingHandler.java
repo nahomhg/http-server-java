@@ -15,27 +15,33 @@ public class EchoEncodingHandler implements RouteHandler{
 
     @Override
     public HttpResponse handle(CustomHttpRequest request) {
-
         String encoding = request.headers().get("Accept-Encoding");
         byte[] buffer = request.path().substring(6).getBytes(StandardCharsets.UTF_8);
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try (GZIPOutputStream gzip = new GZIPOutputStream(byteArrayOutputStream)) {
-            gzip.write(buffer);
-        } catch (IOException exception) {
-            System.err.println("EXCEPTION: " + exception.getMessage());
+        if(encoding.contains("gzip")) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            try (GZIPOutputStream gzip = new GZIPOutputStream(byteArrayOutputStream)) {
+                gzip.write(buffer);
+            } catch (IOException exception) {
+                System.err.println("EXCEPTION: " + exception.getMessage());
+            }
+
+            byte[] compress = byteArrayOutputStream.toByteArray();
+
+            return new HttpResponse.HttpResponseBuilder()
+                    .setHttpStatus(HttpStatus.OK)
+                    .addHeader("Content-Encoding", "gzip")
+                    .addHeader("Content-Type", "text/plain")
+                    .addHeader("Content-Length", String.valueOf(compress.length))
+                    .addBody(compress)
+                    .build();
         }
-
-        byte[] compress = byteArrayOutputStream.toByteArray();
-
         return new HttpResponse.HttpResponseBuilder()
                 .setHttpStatus(HttpStatus.OK)
-                .addHeader("Content-Encoding", "gzip")
                 .addHeader("Content-Type", "text/plain")
-                .addHeader("Content-Length", String.valueOf(compress.length))
-                .addBody(compress)
+                .addHeader("Content-Length", String.valueOf(buffer.length))
+                .addBody(buffer)
                 .build();
-
 //        return new HttpResponse.HttpResponseBuilder()
 //                .setHttpStatus(HttpStatus.NOT_FOUND)
 //                .build();
