@@ -59,7 +59,11 @@ public class HttpServer {
                 CustomHttpRequest request = httpRequest.get();
                 OutputStream output = socket.getOutputStream();
                 HttpResponse response = routerRequest.route(request);
-                boolean shouldCloseConnection = response.getHeaders().containsKey("Connection") && response.getHeaders().get("Connection").equalsIgnoreCase("close");
+
+                String connectionHeader = response.getHeaders().get("Connection");
+
+                boolean shouldCloseConnection = connectionHeader != null &&  connectionHeader.equalsIgnoreCase("close");
+
                 if(shouldCloseConnection){
                     response.getHeaders().put("Connection","close");
                 }
