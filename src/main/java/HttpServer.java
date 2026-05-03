@@ -5,6 +5,7 @@ import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -56,13 +57,14 @@ public class HttpServer {
         try {
             InputStream inputStream = socket.getInputStream();
             while(true) {
-                CustomHttpRequest httpRequest = RequestParser.parser(inputStream);
-                if (httpRequest == null)
+                Optional<CustomHttpRequest> httpRequest = RequestParser.parser(inputStream);
+                if (httpRequest.isEmpty()) {
                     break;
-                if (httpRequest.method().equals("POST")) {
-                    handlePost(socket, httpRequest);
+                }
+                if (httpRequest.get().method().equals("POST")) {
+                    handlePost(socket, httpRequest.get());
                 } else {
-                    handleGet(socket, httpRequest);
+                    handleGet(socket, httpRequest.get());
                 }
             }
         }catch (IOException e){

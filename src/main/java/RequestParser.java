@@ -3,14 +3,18 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Optional;
 
 class RequestParser {
 
-    public static CustomHttpRequest parser(InputStream inputStream) {
+    public static Optional<CustomHttpRequest> parser(InputStream inputStream) {
         try {
             byte[] buffer = new byte[1024];
             int readByteCount = inputStream.read(buffer);
-            if (readByteCount != -1) {
+            if(readByteCount == -1){
+                return Optional.empty();
+            }
+
                 int messageHeaderLength = -1;
                 int payloadIndex = -1;
 
@@ -51,12 +55,12 @@ class RequestParser {
                     System.arraycopy(payloadContent, 0, completePayload, 0, payloadContent.length);
                     System.arraycopy(restOfPayload, 0, completePayload, payloadContent.length, restOfPayload.length);
                 }
-                return mapHttpRequest(requestString, completePayload);
-            }
+                return Optional.of(mapHttpRequest(requestString, completePayload));
+
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Read Error: Unable to read input stream");
         }
-        throw new RuntimeException("error");
+        return Optional.empty();
     }
 
     private static CustomHttpRequest mapHttpRequest(String request, byte[] payload) {
