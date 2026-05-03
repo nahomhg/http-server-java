@@ -10,7 +10,7 @@ public class UserAgentHandler implements RouteHandler{
         String userAgent = request.headers().get("User-Agent");
         return new HttpResponse.HttpResponseBuilder()
                 .setHttpStatus(HttpStatus.OK)
-                .addHeader("Content-Type","text")
+                .addHeader("Content-Type","text/plain")
                 .addHeader("Content-Length",String.valueOf(userAgent.length()))
                 .addBody(userAgent.getBytes())
                 .build();
