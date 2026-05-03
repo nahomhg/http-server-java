@@ -33,8 +33,6 @@ public class HttpServer {
         this.routerRequest.registerHandler(new EchoHandler());
         this.routerRequest.registerHandler(new UserAgentHandler());
         this.routerRequest.registerHandler(new PostHandler(this.directory));
-        this.routerRequest.registerHandler(new CloseConnectionHandler());
-
     }
 
     public void startServer() {
@@ -61,8 +59,10 @@ public class HttpServer {
                 CustomHttpRequest request = httpRequest.get();
                 OutputStream output = socket.getOutputStream();
                 HttpResponse response = routerRequest.route(request);
-                System.out.println(request);
-                System.out.println(response);
+                boolean shouldCloseConnection = response.getHeaders().containsKey("Connection") && response.getHeaders().get("Connection").equalsIgnoreCase("close");
+                if(shouldCloseConnection){
+                    response.getHeaders().put("Connection","close");
+                }
                 output.write(response.toByteArray());
             }
         } catch (IOException e) {
