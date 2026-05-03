@@ -8,6 +8,7 @@ public class EchoHandler implements RouteHandler{
     @Override
     public HttpResponse handle(CustomHttpRequest request) {
         String payload = request.path().substring(6);
+        System.out.println("Executing on class "+this.getClass().getSimpleName());
         return new HttpResponse.HttpResponseBuilder()
                 .setHttpStatus(HttpStatus.OK)
                 .addHeader("Content-Type","text")
