@@ -1,7 +1,8 @@
 public class HomeHandler implements RouteHandler{
+
     @Override
-    public boolean matchesHandler(String endpoint) {
-        return endpoint.equals("/");
+    public boolean matchesHandler(CustomHttpRequest request) {
+        return request.path().equals("/");
     }
 
     @Override
