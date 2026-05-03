@@ -55,7 +55,6 @@ public class HttpServer {
     private void handleRequest(Socket socket) {
         try {
             InputStream inputStream = socket.getInputStream();
-
             CustomHttpRequest httpRequest = RequestParser.parser(inputStream);
 
             if (httpRequest.method().equals("POST")) {
@@ -70,7 +69,7 @@ public class HttpServer {
     }
 
     private void handleGet(Socket socket, CustomHttpRequest customHttpRequest){
-        // TODO Refactor method
+        // Refactored
         try {
             OutputStream output = socket.getOutputStream();
             HttpResponse response = routerRequest.route(customHttpRequest);
@@ -80,6 +79,32 @@ public class HttpServer {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    private void handlePost(Socket socket, CustomHttpRequest customHttpRequest) {
+// TODO: Refactor code below:
+//        try {
+//            OutputStream output = socket.getOutputStream();
+//            if (!customHttpRequest.path().startsWith("/files/")) {
+//                output.write(HTTP_404.getBytes());
+//                return;
+//            }
+//            String fileName = customHttpRequest.path().substring(7);
+//            File outputFile = new File(this.directory + fileName);
+//            FileOutputStream file = new FileOutputStream(outputFile);
+//            file.write(customHttpRequest.body());
+//            output.write(HTTP_201.getBytes());
+//            System.out.println(doesFileExist(this.directory, fileName));
+//            output.close();
+//            file.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+}
+
+//  private void handleGet(Socket socket, CustomHttpRequest customHttpRequest){
+// TODO: Refactor
 //        try {
 //            String response = "";
 //            OutputStream output = socket.getOutputStream();
@@ -92,7 +117,6 @@ public class HttpServer {
 //                    OutputStream out = socket.getOutputStream();
 //                    out.write(header.getBytes(StandardCharsets.UTF_8));
 //                    out.write(fileContent);
-//
 //                } else {
 //                    response = HTTP_404;
 //                }
@@ -117,54 +141,6 @@ public class HttpServer {
 //        }catch (IOException e){
 //            e.printStackTrace();
 //        }
-    }
-
-    private void handlePost(Socket socket, CustomHttpRequest customHttpRequest) {
-        try {
-            OutputStream output = socket.getOutputStream();
-            if (!customHttpRequest.path().startsWith("/files/")) {
-                output.write(HTTP_404.getBytes());
-                return;
-            }
-            String fileName = customHttpRequest.path().substring(7);
-            File outputFile = new File(this.directory + fileName);
-
-            FileOutputStream file = new FileOutputStream(outputFile);
-
-            file.write(customHttpRequest.body());
-            output.write(HTTP_201.getBytes());
-            System.out.println(doesFileExist(this.directory, fileName));
-            output.close();
-            file.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String getHeader(Map<String, String> headers, String headerName){
-        return headers.getOrDefault(headerName, "");
-    }
-
-    private boolean doesFileExist(String directory, String fileName){
-        File file = new File(directory+fileName);
-        System.out.println("file info: "+file.getPath()+"\t"+fileName);
-        return file.exists();
-    }
-
-    private byte[] getFileContent(String filePath) throws IOException {
-        return Files.readAllBytes(Path.of(filePath));
-    }
-
-    private String extractEncoding(String encodingHeader){
-        if(encodingHeader.toLowerCase().contains("gzip")){
-            for(String encoding : encodingHeader.split(", ")){
-                if(encoding.equalsIgnoreCase("gzip")){
-                    return encoding;
-                }
-            }
-        }
-        return "";
-    }
-}
+// }
 
 

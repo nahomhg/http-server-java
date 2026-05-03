@@ -39,8 +39,5 @@ public class EchoEncodingHandler implements RouteHandler{
                 .addHeader("Content-Length", String.valueOf(buffer.length))
                 .addBody(buffer)
                 .build();
-//        return new HttpResponse.HttpResponseBuilder()
-//                .setHttpStatus(HttpStatus.NOT_FOUND)
-//                .build();
     }
 }
