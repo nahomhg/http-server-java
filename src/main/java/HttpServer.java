@@ -73,6 +73,7 @@ public class HttpServer {
             OutputStream output = socket.getOutputStream();
             HttpResponse response = routerRequest.route(customHttpRequest);
             System.out.println(customHttpRequest);
+            System.out.println("byte size"+customHttpRequest.body().length);
             output.write(customHttpRequest.body());
 //            System.out.println(response);
             output.write(response.toByteArray());
