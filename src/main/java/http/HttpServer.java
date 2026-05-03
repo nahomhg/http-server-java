@@ -33,6 +33,7 @@ public class HttpServer {
         this.routerRequest.registerHandler(new EchoHandler());
         this.routerRequest.registerHandler(new UserAgentHandler());
         this.routerRequest.registerHandler(new PostHandler(this.directory));
+        this.routerRequest.registerHandler(new CloseConnectionHandler());
 
     }
 
