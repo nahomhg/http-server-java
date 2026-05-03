@@ -32,9 +32,8 @@ public class FileHandler implements RouteHandler{
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
-            return new HttpResponse.HttpResponseBuilder().setHttpStatus(HttpStatus.NOT_FOUND).build();
-
         }
+        return new HttpResponse.HttpResponseBuilder().setHttpStatus(HttpStatus.NOT_FOUND).build();
     }
 
     private boolean doesFileExist(String directory, String fileName){
