@@ -30,9 +30,9 @@ public class EchoEncodingHandler implements RouteHandler{
 
         return new HttpResponse.HttpResponseBuilder()
                 .setHttpStatus(HttpStatus.OK)
-                .addHeader("Content-Encoding", encoding)
-                .addHeader("Content-Type", "gzip")
-                .addHeader("Content-Length", String.valueOf(buffer.length))
+                .addHeader("Content-Encoding", "gzip")
+                .addHeader("Content-Type", "text/plain")
+                .addHeader("Content-Length", String.valueOf(compress.length))
                 .addBody(compress)
                 .build();
 
