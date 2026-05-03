@@ -73,7 +73,7 @@ public class HttpServer {
             System.err.println(e.getMessage());
         }
     }
-
+}
 //    private void handleGet(Socket socket, CustomHttpRequest customHttpRequest){
 //        // Refactored
 //        try {
@@ -105,7 +105,7 @@ public class HttpServer {
 //            e.printStackTrace();
 //        }
 //    }
-}
+
 
 //  private void handleGet(Socket socket, CustomHttpRequest customHttpRequest){
 // TODO: Refactor

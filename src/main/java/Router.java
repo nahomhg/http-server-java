@@ -10,7 +10,7 @@ public class Router {
 
     public HttpResponse route(CustomHttpRequest httpRequest){
         for(RouteHandler routeHandler : handlers){
-            if(routeHandler.matchesHandler(httpRequest.path())){
+            if(routeHandler.matchesHandler(httpRequest)){
                 return routeHandler.handle(httpRequest);
             }
         }

@@ -1,7 +1,7 @@
 public class NotFoundHandler implements RouteHandler{
 
     @Override
-    public boolean matchesHandler(String endpoint) {
+    public boolean matchesHandler(CustomHttpRequest endpoint) {
         return false;
     }
 
