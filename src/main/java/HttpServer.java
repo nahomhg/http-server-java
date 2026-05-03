@@ -83,23 +83,23 @@ public class HttpServer {
 
     private void handlePost(Socket socket, CustomHttpRequest customHttpRequest) {
 // TODO: Refactor code below:
-//        try {
-//            OutputStream output = socket.getOutputStream();
-//            if (!customHttpRequest.path().startsWith("/files/")) {
-//                output.write(HTTP_404.getBytes());
-//                return;
-//            }
-//            String fileName = customHttpRequest.path().substring(7);
-//            File outputFile = new File(this.directory + fileName);
-//            FileOutputStream file = new FileOutputStream(outputFile);
-//            file.write(customHttpRequest.body());
-//            output.write(HTTP_201.getBytes());
-//            System.out.println(doesFileExist(this.directory, fileName));
-//            output.close();
-//            file.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            OutputStream output = socket.getOutputStream();
+            if (!customHttpRequest.path().startsWith("/files/")) {
+                output.write(HTTP_404.getBytes());
+                return;
+            }
+            String fileName = customHttpRequest.path().substring(7);
+            File outputFile = new File(this.directory + fileName);
+            FileOutputStream file = new FileOutputStream(outputFile);
+            file.write(customHttpRequest.body());
+            output.write(HTTP_201.getBytes());
+            //System.out.println(doesFileExist(this.directory, fileName));
+            output.close();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
