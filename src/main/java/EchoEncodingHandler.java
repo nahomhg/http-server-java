@@ -21,6 +21,7 @@ public class EchoEncodingHandler implements RouteHandler{
             GZIPOutputStream gzip = new GZIPOutputStream(output);
             byte[] buffer = endpoint.getBytes();
             gzip.write(buffer,0,buffer.length);
+            gzip.close();
             return new HttpResponse.HttpResponseBuilder()
                 .setHttpStatus(HttpStatus.OK)
                 .addHeader("Content-Encoding",encoding)
