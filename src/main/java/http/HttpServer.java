@@ -63,6 +63,7 @@ public class HttpServer {
                 if(shouldCloseConnection){
                     response.getHeaders().put("Connection","close");
                 }
+                System.out.println(response);
                 output.write(response.toByteArray());
             }
         } catch (IOException e) {
