@@ -74,7 +74,7 @@ public class HttpServer {
             HttpResponse response = routerRequest.route(customHttpRequest);
             System.out.println(customHttpRequest);
             output.write(customHttpRequest.body());
-            System.out.println(response.toString());
+            System.out.println(response);
             output.write(response.toByteArray());
         } catch (IOException e) {
             System.err.println(e.getMessage());
