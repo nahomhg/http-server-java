@@ -1,3 +1,5 @@
+package http;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -78,7 +80,7 @@ public class HttpResponse {
 
     @Override
     public String toString() {
-        return "HttpResponse{" +
+        return "http.HttpResponse{" +
                 "status=" + status +
                 ", headers=" + headers +
                 ", body=" + Arrays.toString(body) +

@@ -1,4 +1,10 @@
-public class NotFoundHandler implements RouteHandler{
+package routers;
+
+import http.CustomHttpRequest;
+import http.HttpResponse;
+import http.HttpStatus;
+
+public class NotFoundHandler implements RouteHandler {
 
     @Override
     public boolean matchesHandler(CustomHttpRequest endpoint) {

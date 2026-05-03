@@ -1,6 +1,12 @@
+package routers;
+
+import http.CustomHttpRequest;
+import http.HttpResponse;
+import http.HttpStatus;
+
 import java.io.IOException;
 
-public class FileHandler implements RouteHandler{
+public class FileHandler implements RouteHandler {
 
     private final String directory;
     private final FileService fileService;

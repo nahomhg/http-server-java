@@ -50,7 +50,7 @@
 //
 //        if(readByteCount != -1) {
 //            String request = new String(buffer, 0, readByteCount, StandardCharsets.UTF_8);
-//            CustomHttpRequest customHttpRequest = getHttpRequest(request);
+//            http.CustomHttpRequest customHttpRequest = getHttpRequest(request);
 //            String response = "";
 //            byte[] fileContent;
 //            int indexOfDirectory = 0;
@@ -102,7 +102,7 @@
 //        }
 //    }
 //
-//    private static CustomHttpRequest getHttpRequest(String request){
+//    private static http.CustomHttpRequest getHttpRequest(String request){
 //        String[] requestArray = request.split("\r\n");
 //        String requestMethod = requestArray[0].split("\\s+")[0];
 //        String requestPath = requestArray[0].split("\\s+")[1];
@@ -113,7 +113,7 @@
 //            i++;
 //        }
 //        String body = (i + 1 < requestArray.length) ? requestArray[i+1] : "";
-//        return new CustomHttpRequest(requestMethod, requestPath, headers, body);
+//        return new http.CustomHttpRequest(requestMethod, requestPath, headers, body);
 //    }
 //
 //
@@ -131,7 +131,7 @@
 //        return Files.readAllBytes(Path.of(filePath));
 //    }
 //
-////  private static void manageFiles(CustomHttpRequest customHttpRequest, String[] argumentsPassed, Socket socket){
+////  private static void manageFiles(http.CustomHttpRequest customHttpRequest, String[] argumentsPassed, Socket socket){
 ////      try {
 ////          byte[] fileContent = "";
 ////          String header = "";
@@ -156,7 +156,7 @@
 //
 //
 //
-//record CustomHttpRequest(String method, String path, Map<String, String> headers, String body){};
+//record http.CustomHttpRequest(String method, String path, Map<String, String> headers, String body){};
 //
 //class CustomHttpResponse{
 //

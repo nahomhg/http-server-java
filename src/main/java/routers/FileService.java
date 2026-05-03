@@ -1,3 +1,5 @@
+package routers;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,4 +17,3 @@ public record FileService(String directory) {
         return Files.readAllBytes(Path.of(filePath));
     }
 }
-

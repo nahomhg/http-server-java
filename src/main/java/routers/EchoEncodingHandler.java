@@ -1,9 +1,15 @@
+package routers;
+
+import http.CustomHttpRequest;
+import http.HttpResponse;
+import http.HttpStatus;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPOutputStream;
 
-public class EchoEncodingHandler implements RouteHandler{
+public class EchoEncodingHandler implements RouteHandler {
 
     @Override
     public boolean matchesHandler(CustomHttpRequest request) {

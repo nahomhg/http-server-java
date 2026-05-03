@@ -1,3 +1,5 @@
+package http;
+
 public enum HttpStatus {
         CONTINUE(100, "Continue"),
         SWITCHING_PROTOCOLS(101, "Switching Protocols"),
