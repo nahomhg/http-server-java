@@ -2,7 +2,7 @@ public class EchoHandler implements RouteHandler{
 
     @Override
     public boolean matchesHandler(String endpoint) {
-        return endpoint.startsWith("/echo/");
+        return endpoint.matches("/echo/");
     }
 
     @Override
