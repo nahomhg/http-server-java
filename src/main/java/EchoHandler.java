@@ -3,7 +3,7 @@ public class EchoHandler implements RouteHandler{
     @Override
     public boolean matchesHandler(String endpoint) {
         System.out.println(this.getClass().getSimpleName()+" endopint "+endpoint);
-        return endpoint.matches("/echo/");
+        return endpoint.equals("/echo/");
     }
 
     @Override
