@@ -2,7 +2,7 @@ public class EchoHandler implements RouteHandler{
 
     @Override
     public boolean matchesHandler(CustomHttpRequest request) {
-        return request.path().equals("/echo/");
+        return request.method().equals("GET") && request.path().equals("/echo/");
     }
 
     @Override

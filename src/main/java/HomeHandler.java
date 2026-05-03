@@ -2,7 +2,7 @@ public class HomeHandler implements RouteHandler{
 
     @Override
     public boolean matchesHandler(CustomHttpRequest request) {
-        return request.path().equals("/");
+        return request.method().equals("GET") && request.path().equals("/");
     }
 
     @Override

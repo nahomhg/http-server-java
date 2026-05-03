@@ -2,7 +2,7 @@ public class UserAgentHandler implements RouteHandler{
 
     @Override
     public boolean matchesHandler(CustomHttpRequest request) {
-        return request.path().equalsIgnoreCase("/user-agent");
+        return request.method().equals("GET") && request.path().equalsIgnoreCase("/user-agent");
     }
 
     @Override

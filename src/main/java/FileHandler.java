@@ -13,7 +13,7 @@ public class FileHandler implements RouteHandler{
 
     @Override
     public boolean matchesHandler(CustomHttpRequest request) {
-        return request.path().startsWith("/files/");
+        return request.method().equals("GET") && request.path().startsWith("/files/");
     }
 
     @Override
