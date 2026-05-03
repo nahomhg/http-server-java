@@ -35,6 +35,7 @@ public class HttpServer {
         this.routerRequest.registerHandler(new EchoEncodingHandler());
         this.routerRequest.registerHandler(new FileHandler(this.directory));
         this.routerRequest.registerHandler(new EchoHandler());
+        this.routerRequest.registerHandler(new UserAgentHandler());
 
     }
 
