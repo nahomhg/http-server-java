@@ -5,7 +5,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public record FileService(String directory) {
+public class FileService {
+
+    private String directory;
+
+    public FileService(String directory) {
+        this.directory = directory;
+    }
 
     public boolean doesFileExist(String directory, String fileName) {
         File file = new File(directory + fileName);

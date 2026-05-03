@@ -8,7 +8,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public record PostHandler(String directory) implements RouteHandler {
+public class PostHandler implements RouteHandler {
+
+    private String directory;
+
+    public PostHandler(String directory) {
+        this.directory = directory;
+    }
 
     @Override
     public boolean matchesHandler(CustomHttpRequest request) {
