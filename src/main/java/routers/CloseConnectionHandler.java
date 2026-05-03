@@ -9,7 +9,7 @@ public class CloseConnectionHandler implements RouteHandler {
     @Override
     public boolean matchesHandler(CustomHttpRequest request) {
         return request.method().equalsIgnoreCase("GET") &&
-                (request.headers().containsKey("Connection") && request.headers().get("Connection").equalsIgnoreCase(" close"));
+                (request.headers().containsKey("Connection") && request.headers().get("Connection").equalsIgnoreCase("close"));
     }
 
     @Override
