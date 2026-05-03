@@ -54,27 +54,22 @@ public class HttpServer {
     }
 
     private void handleRequest(Socket socket) {
-        try {
-            InputStream inputStream = socket.getInputStream();
-            while(true) {
-                Optional<CustomHttpRequest> httpRequest = RequestParser.parser(inputStream);
-                if (httpRequest.isEmpty()) {
-                    break;
+        try (socket) {
+                InputStream inputStream = socket.getInputStream();
+                while (true) {
+                    Optional<CustomHttpRequest> httpRequest = RequestParser.parser(inputStream);
+                    if (httpRequest.isEmpty()) {
+                        break;
+                    }
+                    CustomHttpRequest request = httpRequest.get();
+                    if (request.method().equals("POST")) {
+                        handlePost(socket, request);
+                    } else {
+                        handleGet(socket, request);
+                    }
                 }
-                if (httpRequest.get().method().equals("POST")) {
-                    handlePost(socket, httpRequest.get());
-                } else {
-                    handleGet(socket, httpRequest.get());
-                }
-            }
-        }catch (IOException e){
-            e.printStackTrace();
-        }finally {
-            try{
-                socket.close();
-            }catch(IOException e){
-                System.err.println(e.getMessage());
-            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
         }
     }
 
