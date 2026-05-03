@@ -11,19 +11,20 @@ public class EchoEncodingHandler implements RouteHandler{
 
     @Override
     public HttpResponse handle(CustomHttpRequest request) {
-        String encoding = request.headers().get("Accept-Encoding");
-        //GZIPOutputStream
-        GZIPInputStream
-        return new HttpResponse.HttpResponseBuilder()
-                .setHttpStatus(HttpStatus.OK)
-                .addHeader("Content-Encoding",encoding)
-                .addHeader("Content-Type","text")
-                .addHeader("Content-Length",)
-
-        """
-                
-                Content-Encoding: gzip
-                Content-Type: text/plain
-                Content-Length: 23"""
+//        String encoding = request.headers().get("Accept-Encoding");
+//        //GZIPOutputStream
+//        GZIPInputStream
+//        return new HttpResponse.HttpResponseBuilder()
+//                .setHttpStatus(HttpStatus.OK)
+//                .addHeader("Content-Encoding",encoding)
+//                .addHeader("Content-Type","text")
+//                .addHeader("Content-Length",)
+//
+//        """
+//
+//                Content-Encoding: gzip
+//                Content-Type: text/plain
+//                Content-Length: 23"""
+        return null;
     }
 }
