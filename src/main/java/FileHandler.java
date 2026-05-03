@@ -12,8 +12,8 @@ public class FileHandler implements RouteHandler{
     }
 
     @Override
-    public boolean matchesHandler(String endpoint) {
-        return endpoint.startsWith("/files/");
+    public boolean matchesHandler(CustomHttpRequest request) {
+        return request.path().startsWith("/files/");
     }
 
     @Override

@@ -6,8 +6,9 @@ import java.util.zip.GZIPOutputStream;
 public class EchoEncodingHandler implements RouteHandler{
 
     @Override
-    public boolean matchesHandler(String endpoint) {
-        return endpoint.startsWith("/echo/") && endpoint.substring(6).matches("[a-zA-Z]+");
+    public boolean matchesHandler(CustomHttpRequest request) {
+        return request.method().equals("GET") && request.path().startsWith("/echo/")
+                && request.path().substring(6).matches("[a-zA-Z]+");
     }
 
     @Override

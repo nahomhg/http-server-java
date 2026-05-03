@@ -1,9 +1,8 @@
 public class EchoHandler implements RouteHandler{
 
     @Override
-    public boolean matchesHandler(String endpoint) {
-        System.out.println(this.getClass().getSimpleName()+" endopint "+endpoint);
-        return endpoint.equals("/echo/");
+    public boolean matchesHandler(CustomHttpRequest request) {
+        return request.path().equals("/echo/");
     }
 
     @Override

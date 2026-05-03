@@ -37,6 +37,7 @@ public class HttpServer {
         this.routerRequest.registerHandler(new FileHandler(this.directory));
         this.routerRequest.registerHandler(new EchoHandler());
         this.routerRequest.registerHandler(new UserAgentHandler());
+        this.routerRequest.registerHandler(new PostHandler(this.directory));
 
     }
 
@@ -62,50 +63,48 @@ public class HttpServer {
                         break;
                     }
                     CustomHttpRequest request = httpRequest.get();
-                    if (request.method().equals("POST")) {
-                        handlePost(socket, request);
-                    } else {
-                        handleGet(socket, request);
-                    }
+                    OutputStream output = socket.getOutputStream();
+                    HttpResponse response = routerRequest.route(request);
+                    System.out.println(request);
+                    System.out.println(response);
+                    output.write(response.toByteArray());
                 }
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
     }
 
-    private void handleGet(Socket socket, CustomHttpRequest customHttpRequest){
-        // Refactored
-        try {
-            OutputStream output = socket.getOutputStream();
-            HttpResponse response = routerRequest.route(customHttpRequest);
-            System.out.println(customHttpRequest);
-            System.out.println(response);
-            output.write(response.toByteArray());
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
-    private void handlePost(Socket socket, CustomHttpRequest customHttpRequest) {
-// TODO: Refactor code below:
-        try {
-            OutputStream output = socket.getOutputStream();
-            if (!customHttpRequest.path().startsWith("/files/")) {
-                output.write(HTTP_404.getBytes());
-                return;
-            }
-            String fileName = customHttpRequest.path().substring(7);
-            File outputFile = new File(this.directory + fileName);
-            FileOutputStream file = new FileOutputStream(outputFile);
-            file.write(customHttpRequest.body());
-            output.write(HTTP_201.getBytes());
-            //System.out.println(doesFileExist(this.directory, fileName));
-            output.close();
-            file.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void handleGet(Socket socket, CustomHttpRequest customHttpRequest){
+//        // Refactored
+//        try {
+//
+//        } catch (IOException e) {
+//            System.err.println(e.getMessage());
+//        }
+//    }
+//
+//    private void handlePost(Socket socket, CustomHttpRequest customHttpRequest) {
+//// TODO: Refactor code below:
+//        try {
+//            OutputStream output = socket.getOutputStream();
+//            HttpResponse response = routerRequest.route(customHttpRequest);
+//            output.write(response.toByteArray());
+////            if (!customHttpRequest.path().startsWith("/files/")) {
+////                output.write(HTTP_404.getBytes());
+////                return;
+////            }
+////            String fileName = customHttpRequest.path().substring(7);
+////            File outputFile = new File(this.directory + fileName);
+////            FileOutputStream file = new FileOutputStream(outputFile);
+////            file.write(customHttpRequest.body());
+////            output.write(HTTP_201.getBytes());
+////            //System.out.println(doesFileExist(this.directory, fileName));
+////            output.close();
+////            file.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
 
 //  private void handleGet(Socket socket, CustomHttpRequest customHttpRequest){

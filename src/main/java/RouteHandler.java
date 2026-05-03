@@ -1,4 +1,4 @@
 public interface RouteHandler {
-    boolean matchesHandler(String endpoint);
+    boolean matchesHandler(CustomHttpRequest request);
     HttpResponse handle(CustomHttpRequest request);
 }
