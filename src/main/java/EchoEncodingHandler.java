@@ -4,7 +4,7 @@ public class EchoEncodingHandler implements RouteHandler{
     @Override
     public boolean matchesHandler(String endpoint) {
         System.out.println("endopint "+endpoint);
-        return endpoint.startsWith("/echo/") && endpoint.substring(7).matches("[a-zA-Z]+/");
+        return endpoint.startsWith("/echo/") && endpoint.substring(6).matches("[a-zA-Z]");
     }
 
     @Override
