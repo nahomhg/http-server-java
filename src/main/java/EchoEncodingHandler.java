@@ -1,3 +1,6 @@
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
 public class EchoEncodingHandler implements RouteHandler{
 
 
@@ -8,7 +11,19 @@ public class EchoEncodingHandler implements RouteHandler{
 
     @Override
     public HttpResponse handle(CustomHttpRequest request) {
-        System.out.println("Handling with more context");
-        return null;
+        String encoding = request.headers().get("Accept-Encoding");
+        //GZIPOutputStream
+        GZIPInputStream
+        return new HttpResponse.HttpResponseBuilder()
+                .setHttpStatus(HttpStatus.OK)
+                .addHeader("Content-Encoding",encoding)
+                .addHeader("Content-Type","text")
+                .addHeader("Content-Length",)
+
+        """
+                
+                Content-Encoding: gzip
+                Content-Type: text/plain
+                Content-Length: 23"""
     }
 }

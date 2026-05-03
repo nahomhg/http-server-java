@@ -72,7 +72,7 @@ public class HttpServer {
         try {
             OutputStream output = socket.getOutputStream();
             HttpResponse response = routerRequest.route(customHttpRequest);
-            System.out.println(customHttpRequest.toString());
+            System.out.println(customHttpRequest);
             System.out.println(response.toString());
             output.write(response.toByteArray());
         } catch (IOException e) {
