@@ -60,7 +60,7 @@ public class HttpServer {
                 OutputStream output = socket.getOutputStream();
                 HttpResponse response = routerRequest.route(request);
 
-                String connectionHeader = response.getHeaders().get("Connection");
+                String connectionHeader = request.headers().get("Connection");
 
                 boolean shouldCloseConnection = connectionHeader != null &&  connectionHeader.equalsIgnoreCase("close");
 
