@@ -55,16 +55,24 @@ public class HttpServer {
     private void handleRequest(Socket socket) {
         try {
             InputStream inputStream = socket.getInputStream();
-            CustomHttpRequest httpRequest = RequestParser.parser(inputStream);
-
-            if (httpRequest.method().equals("POST")) {
-                handlePost(socket, httpRequest);
-            } else {
-                handleGet(socket, httpRequest);
+            while(true) {
+                CustomHttpRequest httpRequest = RequestParser.parser(inputStream);
+                if (httpRequest == null)
+                    break;
+                if (httpRequest.method().equals("POST")) {
+                    handlePost(socket, httpRequest);
+                } else {
+                    handleGet(socket, httpRequest);
+                }
             }
-            socket.close();
         }catch (IOException e){
             e.printStackTrace();
+        }finally {
+            try{
+                socket.close();
+            }catch(IOException e){
+                System.err.println(e.getMessage());
+            }
         }
     }
 
