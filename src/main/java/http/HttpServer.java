@@ -69,8 +69,9 @@ public class HttpServer {
                 }
                 System.out.println(response);
                 output.write(response.toByteArray());
-                if(shouldCloseConnection)
+                if(shouldCloseConnection) {
                     break;
+                }
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
