@@ -17,7 +17,7 @@ public class EchoEncodingHandler implements RouteHandler{
     public HttpResponse handle(CustomHttpRequest request) {
 
         String encoding = request.headers().get("Accept-Encoding");
-        byte[] buffer = request.path().substring(6).getBytes();
+        byte[] buffer = request.path().substring(6).getBytes(StandardCharsets.UTF_8);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try (GZIPOutputStream gzip = new GZIPOutputStream(byteArrayOutputStream)) {
@@ -31,7 +31,7 @@ public class EchoEncodingHandler implements RouteHandler{
         return new HttpResponse.HttpResponseBuilder()
                 .setHttpStatus(HttpStatus.OK)
                 .addHeader("Content-Encoding", encoding)
-                .addHeader("Content-Type", "text")
+                .addHeader("Content-Type", "gzip")
                 .addHeader("Content-Length", String.valueOf(buffer.length))
                 .addBody(compress)
                 .build();
