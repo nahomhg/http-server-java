@@ -14,7 +14,7 @@ public class FileHandler implements RouteHandler {
 
     private final String directory;
     private final FileService fileService;
-    private static final Logger LOGGER = Logger.getLogger(FileWriterService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FileHandler.class.getName());
 
 
     public FileHandler(String directory) {
@@ -44,6 +44,7 @@ public class FileHandler implements RouteHandler {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE,e.getMessage());
         }
+        LOGGER.log(Level.INFO,"INFO: 404 Returned to client, File Not Found.");
         return new HttpResponse.HttpResponseBuilder().setHttpStatus(HttpStatus.NOT_FOUND).build();
     }
 
