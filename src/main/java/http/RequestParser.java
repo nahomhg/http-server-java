@@ -6,8 +6,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RequestParser {
+
+    private static final Logger LOGGER = Logger.getLogger(RequestParser.class.getName());
 
     public static Optional<CustomHttpRequest> parser(InputStream inputStream) {
         try {
@@ -16,7 +20,6 @@ public class RequestParser {
             if(readByteCount == -1){
                 return Optional.empty();
             }
-
                 int messageHeaderLength = -1;
                 int payloadIndex = -1;
 
@@ -60,7 +63,7 @@ public class RequestParser {
                 return Optional.of(mapHttpRequest(requestString, completePayload));
 
         } catch (IOException e) {
-            System.err.println("Read Error: Unable to read input stream");
+            LOGGER.log(Level.SEVERE, "Read Error: Unable to read input stream");
         }
         return Optional.empty();
     }
@@ -71,14 +74,11 @@ public class RequestParser {
         String requestMethod = requestArray[0].split("\\s+")[0];
         String requestPath = requestArray[0].split("\\s+")[1];
         HashMap<String, String> headers = new HashMap<>();
-        System.out.println("ReqArr: " + Arrays.toString(requestArray));
         int i = 1;
         while (i < requestArray.length && !requestArray[i].equals("")) {
             headers.put(requestArray[i].split(": ")[0], requestArray[i].split(": ")[1]);
             i++;
         }
-        System.out.println(headers);
-
         return new CustomHttpRequest(requestMethod, requestPath, headers, payload);
     }
 }

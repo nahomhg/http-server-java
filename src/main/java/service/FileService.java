@@ -1,4 +1,4 @@
-package routers;
+package service;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,6 @@ public class FileService {
 
     public boolean doesFileExist(String directory, String fileName) {
         File file = new File(directory + fileName);
-        System.out.println("file info: " + file.getPath() + "\t" + fileName);
         return file.exists();
     }
 

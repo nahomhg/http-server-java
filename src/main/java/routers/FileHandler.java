@@ -3,13 +3,19 @@ package routers;
 import http.CustomHttpRequest;
 import http.HttpResponse;
 import http.HttpStatus;
+import service.FileService;
+import service.FileWriterService;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FileHandler implements RouteHandler {
 
     private final String directory;
     private final FileService fileService;
+    private static final Logger LOGGER = Logger.getLogger(FileWriterService.class.getName());
+
 
     public FileHandler(String directory) {
         if(directory==null) throw new IllegalArgumentException("Directory cannot be null");
@@ -36,7 +42,7 @@ public class FileHandler implements RouteHandler {
                         .build();
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            LOGGER.log(Level.SEVERE,e.getMessage());
         }
         return new HttpResponse.HttpResponseBuilder().setHttpStatus(HttpStatus.NOT_FOUND).build();
     }

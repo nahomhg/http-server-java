@@ -9,6 +9,8 @@ import java.net.SocketException;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HttpServer {
 
@@ -16,6 +18,7 @@ public class HttpServer {
     private final ExecutorService service;
     private final String directory;
     private final Router routerRequest;
+    private static final Logger LOGGER = Logger.getLogger(HttpServer.class.getName());
 
     public HttpServer(ServerSocket socket) throws SocketException {
         this(socket, "");
@@ -44,7 +47,7 @@ public class HttpServer {
                 });
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE,e.getMessage());
         }
     }
 
@@ -67,14 +70,13 @@ public class HttpServer {
                 if(shouldCloseConnection){
                     response.getHeaders().put("Connection","close");
                 }
-                System.out.println(response);
                 output.write(response.toByteArray());
                 if(shouldCloseConnection) {
                     break;
                 }
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 }

@@ -1,11 +1,17 @@
 import http.HttpServer;
+import service.FileWriterService;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main {
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) {
+
         int indexOfDirectory = Arrays.asList(args).indexOf("--directory");
         try{
             ServerSocket serverSocket = new ServerSocket(4221);
@@ -16,7 +22,7 @@ public class Main {
 
             httpServer.startServer();
         }catch (IOException e){
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
 
     }

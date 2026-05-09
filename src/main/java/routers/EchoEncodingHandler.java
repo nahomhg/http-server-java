@@ -3,13 +3,19 @@ package routers;
 import http.CustomHttpRequest;
 import http.HttpResponse;
 import http.HttpStatus;
+import http.RequestParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
 public class EchoEncodingHandler implements RouteHandler {
+
+    private static final Logger LOGGER = Logger.getLogger(EchoEncodingHandler.class.getName());
+
 
     @Override
     public boolean matchesHandler(CustomHttpRequest request) {
@@ -27,7 +33,7 @@ public class EchoEncodingHandler implements RouteHandler {
             try (GZIPOutputStream gzip = new GZIPOutputStream(byteArrayOutputStream)) {
                 gzip.write(buffer);
             } catch (IOException exception) {
-                System.err.println("EXCEPTION: " + exception.getMessage());
+                LOGGER.log(Level.SEVERE, "EXCEPTION: " + exception.getMessage());
             }
 
             byte[] compress = byteArrayOutputStream.toByteArray();
