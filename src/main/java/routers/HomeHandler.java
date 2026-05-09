@@ -13,8 +13,12 @@ public class HomeHandler implements RouteHandler {
 
     @Override
     public HttpResponse handle(CustomHttpRequest request) {
+        String payload = "Connection Established\nHello!";
         return new HttpResponse.HttpResponseBuilder()
                 .setHttpStatus(HttpStatus.OK)
+                .addHeader("Content-Type","text/plain")
+                .addHeader("Content-Length",String.valueOf(payload.getBytes().length))
+                .addBody(payload.getBytes())
                 .build();
     }
 }

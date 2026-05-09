@@ -13,8 +13,12 @@ public class NotFoundHandler implements RouteHandler {
 
     @Override
     public HttpResponse handle(CustomHttpRequest request) {
+        String payload = "404 - Not Found";
         return new HttpResponse.HttpResponseBuilder()
                 .setHttpStatus(HttpStatus.NOT_FOUND)
+                .addHeader("Content-Type","text/plain")
+                .addHeader("Content-Length",String.valueOf(payload.getBytes().length))
+                .addBody(payload.getBytes())
                 .build();
     }
 }
