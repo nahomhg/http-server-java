@@ -9,6 +9,7 @@ import java.net.SocketException;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ public class HttpServer {
     private final ExecutorService service;
     private final String directory;
     private final Router routerRequest;
+    private volatile boolean isRunning = true;
     private static final Logger LOGGER = Logger.getLogger(HttpServer.class.getName());
 
     public HttpServer(ServerSocket socket) throws SocketException {
@@ -40,7 +42,26 @@ public class HttpServer {
 
     public void startServer() {
         try {
-            while (true) {
+//            Thread terminatingThread = new Thread(() -> {
+//                try {
+//                    LOGGER.log(Level.SEVERE, "Shutting down server");
+//                    System.out.println("SHUTTING DOWN");
+//                        serverSocket.close();
+//                        service.awaitTermination(5, TimeUnit.SECONDS);
+//                    isRunning = false;
+//                }catch (SocketException socket){
+//                    System.out.println("Shut down ");
+//                }
+//                catch (IOException io){
+//                        LOGGER.log(Level.SEVERE, "ERROR: "+io.getMessage());
+//                    System.out.println("Shut down ");
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//
+//            });
+
+            while (isRunning) {
                 Socket socket = this.serverSocket.accept();
                 service.execute(() -> {
                     handleRequest(socket);
@@ -48,19 +69,21 @@ public class HttpServer {
             }
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE,e.getMessage());
+            System.err.println("Hello, here's exception \n"+e.getMessage());
         }
     }
 
     private void handleRequest(Socket socket) {
         try (socket) {
             InputStream inputStream = socket.getInputStream();
+            OutputStream output = socket.getOutputStream();
             while (true) {
                 Optional<CustomHttpRequest> httpRequest = RequestParser.parser(inputStream);
                 if (httpRequest.isEmpty()) {
                     break;
                 }
                 CustomHttpRequest request = httpRequest.get();
-                OutputStream output = socket.getOutputStream();
+                socket.setSoTimeout(10000);
                 HttpResponse response = routerRequest.route(request);
 
                 String connectionHeader = request.headers().get("Connection");
@@ -76,7 +99,8 @@ public class HttpServer {
                 }
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
+            System.out.println("IO Disconnection\n"+e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage()+"\tSome bs happened");
         }
     }
 }

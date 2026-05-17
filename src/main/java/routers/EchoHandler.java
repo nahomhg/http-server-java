@@ -4,6 +4,8 @@ import http.CustomHttpRequest;
 import http.HttpResponse;
 import http.HttpStatus;
 
+import java.io.IOException;
+
 public class EchoHandler implements RouteHandler {
 
     @Override

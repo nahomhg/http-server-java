@@ -32,9 +32,7 @@ public class RequestParser {
                         messageHeaderLength = i;
                     }
                 }
-
                 byte[] payloadContent = Arrays.copyOfRange(buffer, payloadIndex, readByteCount);
-
                 String requestString = new String(buffer, 0, messageHeaderLength, StandardCharsets.UTF_8);
 
                 int expectedContentLength = 0;
@@ -63,7 +61,7 @@ public class RequestParser {
                 return Optional.of(mapHttpRequest(requestString, completePayload));
 
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Read Error: Unable to read input stream");
+            LOGGER.log(Level.INFO, "Client connection disconnected");
         }
         return Optional.empty();
     }
