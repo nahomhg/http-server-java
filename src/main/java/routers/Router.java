@@ -4,20 +4,20 @@ import http.CustomHttpRequest;
 import http.HttpResponse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Router {
-    private final List<RouteHandler> handlers = new ArrayList<>();
+    private final HashMap<String, RouteHandler> handlers = new HashMap<>();
 
-    public void registerHandler(RouteHandler handler) {
-        this.handlers.add(handler);
+    public void registerHandler(String handlerEndpoint, RouteHandler handler) {
+        this.handlers.put(handlerEndpoint, handler);
     }
 
     public HttpResponse route(CustomHttpRequest httpRequest){
-        for(RouteHandler routeHandler : handlers){
-            if(routeHandler.matchesHandler(httpRequest)){
-                return routeHandler.handle(httpRequest);
-            }
+        if(handlers.containsKey(httpRequest.path())){
+            var router = handlers.get(httpRequest.path());
+            return router.handle(httpRequest);
         }
         return new NotFoundHandler().handle(httpRequest);
 

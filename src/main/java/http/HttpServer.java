@@ -32,12 +32,12 @@ public class HttpServer {
         this.service = Executors.newFixedThreadPool(10);
         this.serverSocket.setReuseAddress(true);
         this.routerRequest = new Router();
-        this.routerRequest.registerHandler(new HomeHandler());
-        this.routerRequest.registerHandler(new EchoEncodingHandler());
-        this.routerRequest.registerHandler(new FileHandler(this.directory));
-        this.routerRequest.registerHandler(new EchoHandler());
-        this.routerRequest.registerHandler(new UserAgentHandler());
-        this.routerRequest.registerHandler(new PostHandler(this.directory));
+        this.routerRequest.registerHandler("/", new HomeHandler());
+        this.routerRequest.registerHandler("/echo/[a-zA-Z]", new EchoEncodingHandler());
+        this.routerRequest.registerHandler("/files/[a-zA-Z]",new FileHandler(this.directory));
+        this.routerRequest.registerHandler("/echo/",new EchoHandler());
+        this.routerRequest.registerHandler("/user-agent",new UserAgentHandler());
+        this.routerRequest.registerHandler("/files/[a-zA-Z]",new PostHandler(this.directory));
     }
 
     public void startServer() {
