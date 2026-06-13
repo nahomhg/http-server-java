@@ -3,8 +3,8 @@ package routers;
 import http.CustomHttpRequest;
 import http.HttpResponse;
 import http.HttpStatus;
+import routers.config.RouteHandler;
 import service.FileService;
-import service.FileWriterService;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -16,20 +16,17 @@ public class FileHandler implements RouteHandler {
     private final FileService fileService;
     private static final Logger LOGGER = Logger.getLogger(FileHandler.class.getName());
 
-
     public FileHandler(String directory) {
-        if(directory==null) throw new IllegalArgumentException("Directory cannot be null");
+        if(directory.isEmpty()) throw new IllegalArgumentException("Directory cannot be null");
         this.directory = directory;
         fileService = new FileService(directory);
     }
 
     @Override
-    public boolean matchesHandler(CustomHttpRequest request) {
-        return request.method().equals("GET") && request.path().startsWith("/files/");
-    }
-
-    @Override
     public HttpResponse handle(CustomHttpRequest request)  {
+        if(request.method().equals("POST")) {
+            return new PostHandler(this.directory).handle(request);
+        }
         try {
             String fileName = request.path().substring(7);
             if (fileService.doesFileExist(this.directory, fileName)) {

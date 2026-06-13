@@ -1,6 +1,9 @@
 package http;
 
-import routers.*;
+import routers.config.HashMapRouter;
+import routers.config.RouteHandler;
+import routers.config.Router;
+import routers.config.RouterKey;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -9,7 +12,6 @@ import java.net.SocketException;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,27 +19,15 @@ public class HttpServer {
 
     private final ServerSocket serverSocket;
     private final ExecutorService service;
-    private final String directory;
-    private final Router routerRequest;
+    private final Router httpRouter;
     private volatile boolean isRunning = true;
     private static final Logger LOGGER = Logger.getLogger(HttpServer.class.getName());
 
-    public HttpServer(ServerSocket socket) throws SocketException {
-        this(socket, "");
-    }
-
-    public HttpServer(ServerSocket serverSocket, String directory) throws SocketException {
+    public HttpServer(ServerSocket serverSocket, Router router) throws SocketException {
         this.serverSocket = serverSocket;
-        this.directory = directory;
         this.service = Executors.newFixedThreadPool(10);
         this.serverSocket.setReuseAddress(true);
-        this.routerRequest = new Router();
-        this.routerRequest.registerHandler("/", new HomeHandler());
-        this.routerRequest.registerHandler("/echo/[a-zA-Z]", new EchoEncodingHandler());
-        this.routerRequest.registerHandler("/files/[a-zA-Z]",new FileHandler(this.directory));
-        this.routerRequest.registerHandler("/echo/",new EchoHandler());
-        this.routerRequest.registerHandler("/user-agent",new UserAgentHandler());
-        this.routerRequest.registerHandler("/files/[a-zA-Z]",new PostHandler(this.directory));
+        this.httpRouter = router;
     }
 
     public void startServer() {
@@ -84,7 +74,11 @@ public class HttpServer {
                 }
                 CustomHttpRequest request = httpRequest.get();
                 socket.setSoTimeout(10000);
-                HttpResponse response = routerRequest.route(request);
+                //
+                RouteHandler requestRouteHandler = httpRouter.match(request.method(),request.path());
+
+                HttpResponse response = requestRouteHandler.handle(request);
+//                response = new GzipEncodingFilter().doFilter(response);
 
                 String connectionHeader = request.headers().get("Connection");
 

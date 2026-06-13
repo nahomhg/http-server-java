@@ -3,13 +3,9 @@ package routers;
 import http.CustomHttpRequest;
 import http.HttpResponse;
 import http.HttpStatus;
+import routers.config.RouteHandler;
 
 public class UserAgentHandler implements RouteHandler {
-
-    @Override
-    public boolean matchesHandler(CustomHttpRequest request) {
-        return request.method().equals("GET") && request.path().equalsIgnoreCase("/user-agent");
-    }
 
     @Override
     public HttpResponse handle(CustomHttpRequest request) {

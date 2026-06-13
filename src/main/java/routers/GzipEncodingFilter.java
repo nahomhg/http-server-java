@@ -1,9 +1,9 @@
 package routers;
 
+import Filter.RequestFilter;
 import http.CustomHttpRequest;
 import http.HttpResponse;
 import http.HttpStatus;
-import http.RequestParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,21 +12,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
-public class EchoEncodingHandler implements RouteHandler {
+public class GzipEncodingFilter implements RequestFilter {
 
-    private static final Logger LOGGER = Logger.getLogger(EchoEncodingHandler.class.getName());
-
-
-    @Override
-    public boolean matchesHandler(CustomHttpRequest request) {
-        return request.method().equals("GET") && request.path().startsWith("/echo/")
-                && request.path().substring(6).matches("[a-zA-Z]+");
-    }
+    private static final Logger LOGGER = Logger.getLogger(GzipEncodingFilter.class.getName());
 
     @Override
-    public HttpResponse handle(CustomHttpRequest request) {
-        String encoding = request.headers().get("Accept-Encoding");
-        byte[] buffer = request.path().substring(6).getBytes(StandardCharsets.UTF_8);
+    public HttpResponse doFilter(HttpResponse response) {
+        String encoding = response.getHeaders().get("Accept-Encoding");
+        byte[] buffer = response.getBody();
 
         if(encoding != null && encoding.contains("gzip")) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -46,11 +39,6 @@ public class EchoEncodingHandler implements RouteHandler {
                     .addBody(compress)
                     .build();
         }
-        return new HttpResponse.HttpResponseBuilder()
-                .setHttpStatus(HttpStatus.OK)
-                .addHeader("Content-Type", "text/plain")
-                .addHeader("Content-Length", String.valueOf(buffer.length))
-                .addBody(buffer)
-                .build();
+        return response;
     }
 }
