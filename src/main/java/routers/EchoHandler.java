@@ -9,7 +9,8 @@ public class EchoHandler implements RouteHandler {
 
     @Override
     public HttpResponse handle(CustomHttpRequest request) {
-
+        System.out.println("We're on echo");
+        System.out.println(request);
         String payload = request.path().substring(6);
         if(request.headers().containsKey("Accept-Encoding")){
             return new HttpResponse.HttpResponseBuilder()

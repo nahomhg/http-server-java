@@ -25,6 +25,11 @@ public class HashMapRouter implements Router {
         if(route.startsWith("/files/") && handlers.containsKey(prefix)){
             return handlers.get(prefix);
         }
+
+        RouterKey echoPrefix = new RouterKey(method.toUpperCase(),"/echo/");
+        if(route.startsWith("/echo/") && handlers.containsKey(echoPrefix)){
+            return handlers.get(echoPrefix);
+        }
         return new NotFoundHandler();
     }
 

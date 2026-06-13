@@ -28,7 +28,7 @@ public class Main {
 
             Router router = new HashMapRouter();
             router.addRoute("GET","/", new HomeHandler());
-            router.addRoute("GET", "/echo/abc", new EchoHandler());
+            router.addRoute("GET", "/echo/", new EchoHandler());
             router.addRoute("GET","/user-agent/", new UserAgentHandler());
             if(directory != null){
                 router.addRoute("GET","/files/", new FileHandler(directory));
