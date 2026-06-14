@@ -162,39 +162,3 @@ Running tests on your code. Logs should appear shortly...
 [tester::#AT4] Connecting to localhost:4221 using TCP
 [tester::#AT4] Success! Closing connection
 [tester::#AT4] Test passed.
-
-Test passed. Congrats!
-
-Mark step as complete in your browser.
-
-Questions
-What’s the difference between TCP and HTTP?
-HTTP is the communication mechanism that defines how data will be tranfered across computers/server.
-TCP is the connection protocol that sits atop of and enchances IP in that it makes sure data is sent in the order it was given, makes
-sure that server actually gets data by establishing an 'ACK' system that client and server send back and forth via a threeway handshake.
-
-Why does HTTP sit on top of TCP?
-Because HTTP defines how the connection will be done, for example HTTP/1.1 sends info/data via plain text while 2 sends data over binary format.
-
-What happens after ServerSocket.accept()?
-This method is 'blocking' meaning that the server just waits and listens until a client connects and sends something. This is why we've got to
-handle an IOException, meaning that connection was disturbed.
-
-What does InputStream.read() actually guarantee?
-Not sure - but intuitively, I'd say if the request has no body then it'll return -1 else it'll read the bytes and return length of the request byte array.
-
-Can a request arrive in multiple packets?
-Yes, requests can chunked into multiple packets, perhaps if the intended payload is too large so sent in different requests.
-But within the packet headers there will be an order number that identifies in what order packets should be processed.
-
-Can multiple requests arrive in one packet?
-From the understanding that requests:packets is 1:1 (may be wrong) I'd say yes, users can use a '--next' tag to keep the requests separate but within the same request.
-
-What is half-open connection?
-No clue.
-Why can a socket block forever?
-Yes, if there's not a connection timeout implemented it can keep blocking forever.
-
-What does closing client socket vs server socket do?
-Client socket means the thread handling the client connection will terminate, client won't be able to send requests to server.
-Server socket means that the server will no longer be accepting/listening for any requests.
