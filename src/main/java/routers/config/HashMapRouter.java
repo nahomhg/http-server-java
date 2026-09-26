@@ -3,10 +3,13 @@ package routers.config;
 import routers.NotFoundHandler;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HashMapRouter implements Router {
 
     private final HashMap<RouterKey, RouteHandler> handlers = new HashMap<>();
+    private static final Logger LOGGER = Logger.getLogger(HashMapRouter.class.getName());
 
     @Override
     public void addRoute(String method, String path, RouteHandler routeHandler) {
@@ -15,8 +18,10 @@ public class HashMapRouter implements Router {
 
     @Override
     public RouteHandler match(String method, String route) {
+        LOGGER.log(Level.INFO, "Method: "+method+"\nroute: "+route+"\n"+handlers);
 
         RouterKey key = new RouterKey(method.toUpperCase(), route);
+        LOGGER.log(Level.INFO,"Key info: "+key);
         if(handlers.containsKey(key)){
             return handlers.get(key);
         }
@@ -30,25 +35,7 @@ public class HashMapRouter implements Router {
         if(route.startsWith("/echo/") && handlers.containsKey(echoPrefix)){
             return handlers.get(echoPrefix);
         }
-
-        RouterKey userAgentPrefix = new RouterKey(method.toUpperCase(),"user-agent");
-        if(route.startsWith("user-agent") && handlers.containsKey(prefix)){
-            return handlers.get(userAgentPrefix);
-        }
         return new NotFoundHandler();
     }
 
-//    @Override
-//    public RouteHandler match(String method, String route) {
-//        RouterKey key = new RouterKey(method.toUpperCase(), route);
-//        if(handlers.containsKey(key)){
-//            return handlers.get(key);
-//        }
-//
-//        RouterKey prefix = new RouterKey(method.toUpperCase(), "/files/");
-//        if(route.startsWith("/files/") && handlers.containsKey(prefix)){
-//            return handlers.get(prefix);
-//        }
-//       return new NotFoundHandler();
-//    }
 }

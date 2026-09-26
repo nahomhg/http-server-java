@@ -24,4 +24,12 @@ public class RouterKey {
     public int hashCode() {
         return Objects.hash(method, route);
     }
+
+    @Override
+    public String toString() {
+        return "RouterKey{" +
+                "method='" + method + '\'' +
+                ", route='" + route + '\'' +
+                '}';
+    }
 }

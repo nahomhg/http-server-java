@@ -17,14 +17,14 @@ public class FileHandler implements RouteHandler {
     private static final Logger LOGGER = Logger.getLogger(FileHandler.class.getName());
 
     public FileHandler(String directory) {
-        if(directory.isEmpty()) throw new IllegalArgumentException("Directory cannot be null");
+        if (directory.isEmpty()) throw new IllegalArgumentException("Directory cannot be null");
         this.directory = directory;
         fileService = new FileService(directory);
     }
 
     @Override
-    public HttpResponse handle(CustomHttpRequest request)  {
-        if(request.method().equals("POST")) {
+    public HttpResponse handle(CustomHttpRequest request) {
+        if (request.method().equals("POST")) {
             return new PostHandler(this.directory).handle(request);
         }
         try {
@@ -33,16 +33,15 @@ public class FileHandler implements RouteHandler {
                 byte[] fileContent = fileService.getFileContent(this.directory + fileName);
                 return new HttpResponse.HttpResponseBuilder()
                         .setHttpStatus(HttpStatus.OK)
-                        .addHeader("Content-Type","application/octet-stream")
-                        .addHeader("Content-Length",String.valueOf(fileContent.length))
+                        .addHeader("Content-Type", "application/octet-stream")
+                        .addHeader("Content-Length", String.valueOf(fileContent.length))
                         .addBody(fileContent)
                         .build();
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE,e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
-        LOGGER.log(Level.INFO,"INFO: 404 Returned to client, File Not Found.");
+        LOGGER.log(Level.INFO, "INFO: 404 Returned to client, File Not Found.");
         return new HttpResponse.HttpResponseBuilder().setHttpStatus(HttpStatus.NOT_FOUND).build();
     }
-
 }

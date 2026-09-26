@@ -9,6 +9,7 @@ public class UserAgentHandler implements RouteHandler {
 
     @Override
     public HttpResponse handle(CustomHttpRequest request) {
+        System.out.println(this.getClass().getSimpleName()+" invoked");
         String userAgent = request.headers().get("User-Agent");
         return new HttpResponse.HttpResponseBuilder()
                 .setHttpStatus(HttpStatus.OK)
@@ -17,4 +18,5 @@ public class UserAgentHandler implements RouteHandler {
                 .addBody(userAgent.getBytes())
                 .build();
     }
+
 }
