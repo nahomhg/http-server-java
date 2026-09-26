@@ -16,14 +16,14 @@ public class EchoHandler implements RouteHandler {
             return new HttpResponse.HttpResponseBuilder()
                     .setHttpStatus(HttpStatus.OK)
                     .addHeader("Content-Encoding",request.headers().get("Accept-Encoding"))
-                    .addHeader("Content-Type","text")
+                    .addHeader("Content-Type","text/plain")
                     .addHeader("Content-Length", String.valueOf(payload.length()))
                     .addBody(payload.getBytes())
                     .build();
         }
         return new HttpResponse.HttpResponseBuilder()
                 .setHttpStatus(HttpStatus.OK)
-                .addHeader("Content-Type","text")
+                .addHeader("Content-Type","text/plain")
                 .addHeader("Content-Length", String.valueOf(payload.length()))
                 .addBody(payload.getBytes())
                 .build();
