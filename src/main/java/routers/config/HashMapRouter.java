@@ -30,6 +30,11 @@ public class HashMapRouter implements Router {
         if(route.startsWith("/echo/") && handlers.containsKey(echoPrefix)){
             return handlers.get(echoPrefix);
         }
+
+        RouterKey userAgentPrefix = new RouterKey(method.toUpperCase(),"user-agent");
+        if(route.startsWith("user-agent") && handlers.containsKey(prefix)){
+            return handlers.get(userAgentPrefix);
+        }
         return new NotFoundHandler();
     }
 
