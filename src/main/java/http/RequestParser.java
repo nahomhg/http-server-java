@@ -22,7 +22,6 @@ public class RequestParser {
             }
                 int messageHeaderLength = -1;
                 int payloadIndex = -1;
-
                 for (int i = 0; i <= readByteCount; i++) {
                     if ((i + 3 < readByteCount) && buffer[i] == 13 && buffer[i + 1] == 10 && buffer[i + 2] == 13 && buffer[i + 3] == 10) {
                         messageHeaderLength = i;

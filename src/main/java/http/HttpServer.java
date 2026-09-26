@@ -78,7 +78,8 @@ public class HttpServer {
                 RouteHandler requestRouteHandler = httpRouter.match(request.method(),request.path());
 
                 HttpResponse response = requestRouteHandler.handle(request);
-//                response = new GzipEncodingFilter().doFilter(response);
+//              TODO: Implement a gzipEncoding filter
+//              response = new GzipEncodingFilter().doFilter(response);
 
                 String connectionHeader = request.headers().get("Connection");
 

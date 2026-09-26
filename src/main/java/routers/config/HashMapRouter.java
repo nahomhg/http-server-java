@@ -18,10 +18,8 @@ public class HashMapRouter implements Router {
 
     @Override
     public RouteHandler match(String method, String route) {
-        LOGGER.log(Level.INFO, "Method: "+method+"\nroute: "+route+"\n"+handlers);
 
         RouterKey key = new RouterKey(method.toUpperCase(), route);
-        LOGGER.log(Level.INFO,"Key info: "+key);
         if(handlers.containsKey(key)){
             return handlers.get(key);
         }
